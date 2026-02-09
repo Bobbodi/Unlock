@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 
-const Login = () => {
+const Chat = () => {
 
     const navigate = useNavigate();
 
@@ -12,19 +12,20 @@ const Login = () => {
         navigate("/profile");
     }
 
-    const goToChat = () => {
-        navigate("/chat");
+    const goToLogin = () => {
+        navigate("/login");
     }
+
 
     return (
         <div>
-            Login Page
+            Chat Page
 
             <button onClick={goToHome}>Go to Home</button>
             <button onClick={goToProfile}>Go to Profile</button>
-            <button onClick={goToChat}>Go to Chat</button>
+            <button onClick={goToLogin}>Go to Login</button>
         </div>
     )
 }
 
-export default Login
+export default Chat
