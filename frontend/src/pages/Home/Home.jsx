@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom"
 
-const Login = () => {
+const Home = () => {
 
     const navigate = useNavigate();
 
-    const goToHome = () => {
-        navigate("/home");
+    const goToLogin = () => {
+        navigate("/login");
     }
 
     const goToProfile = () => {
@@ -18,13 +18,13 @@ const Login = () => {
 
     return (
         <div>
-            Login Page
+            Home Page
 
-            <button onClick={goToHome}>Go to Home</button>
+            <button onClick={goToLogin}>Go to Login</button>
             <button onClick={goToProfile}>Go to Profile</button>
             <button onClick={goToChat}>Go to Chat</button>
         </div>
     )
 }
 
-export default Login
+export default Home

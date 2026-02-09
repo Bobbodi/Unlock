@@ -16,12 +16,12 @@ const sidebarStyle = {
   width: 80,
   height: "100vh",
   background: "#90ABEF",
-  padding: "20px 0",              // smaller so bottom isn’t clipped
+  padding: "20px 0",              
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "space-between",
-  boxSizing: "border-box",        // important: padding included in height
+  boxSizing: "border-box",        
 };
 
 const topGroupStyle = {
