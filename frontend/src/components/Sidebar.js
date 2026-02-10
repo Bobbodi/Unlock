@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useStream } from "../contexts/streamClientContext";
 import defaultPfp from "../assets/images/default-pfp.jpg";
 import { useState } from "react";
 import "./ProfileImage.css";
@@ -7,6 +8,7 @@ import "./ProfileImage.css";
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { streamClient, streamLoading } = useStream();
 
   const [userPfp, setUserPfp] = useState(defaultPfp);
 
@@ -44,7 +46,8 @@ export default function Sidebar() {
 
       <button
         style={navBtnStyle(false)}
-        onClick={async () => { await supabase.auth.signOut();
+        onClick={async () => {
+          await supabase.auth.signOut();
           navigate("/login");
         }}
         aria-label="Logout"
