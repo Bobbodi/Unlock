@@ -1,9 +1,20 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useStream } from "../contexts/streamClientContext";
+import defaultPfp from "../assets/images/default-pfp.jpg";
+import homeIcon from "../assets/images/home-icon-center.png";
+import chatIcon from "../assets/images/chat-icon.jpg";
+import { SIDEBAR_IMAGE_SIZE } from "../utils/constants";
+
+import { useState } from "react";
+import "./ProfileImage.css";
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { streamClient, streamLoading } = useStream();
+
+  const [userPfp, setUserPfp] = useState(defaultPfp);
 
   return (
     <div style={sidebarStyle}>
@@ -13,7 +24,11 @@ export default function Sidebar() {
           onClick={() => navigate("/profile")}
           aria-label="Profile"
         >
-          👤
+          <img
+            src={userPfp}
+            alt="Profile"
+            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
+          />
         </button>
 
         <button
@@ -21,7 +36,11 @@ export default function Sidebar() {
           onClick={() => navigate("/home")}
           aria-label="Home"
         >
-          🏠
+          <img
+            src={homeIcon}
+            alt="Home"
+            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center"  }}
+          />
         </button>
 
         <button
@@ -29,13 +48,18 @@ export default function Sidebar() {
           onClick={() => navigate("/chat")}
           aria-label="Chat"
         >
-          💬
+          <img
+            src={chatIcon}
+            alt="Chat"
+            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
+          />
         </button>
       </div>
 
       <button
         style={navBtnStyle(false)}
-        onClick={async () => { await supabase.auth.signOut();
+        onClick={async () => {
+          await supabase.auth.signOut();
           navigate("/login");
         }}
         aria-label="Logout"
@@ -81,6 +105,6 @@ const baseBtn = {
 function navBtnStyle(active) {
   return {
     ...baseBtn,
-    outline: active ? "3px solid rgba(0,0,0,0.18)" : "none",
+    outline: active ? "3px solid #384b95" : "none",
   };
 }

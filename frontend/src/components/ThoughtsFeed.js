@@ -1,6 +1,6 @@
 export default function ThoughtsFeed({ thoughts }) {
   if (!thoughts || thoughts.length === 0) {
-    return <p style={{ opacity: 0.7, marginTop: 10 }}>No thoughts yet.</p>;
+    return <p style={{ fontSize: 20, opacity: 0.7, marginTop: 10 }}>No thoughts yet.</p>;
   }
 
   return (
