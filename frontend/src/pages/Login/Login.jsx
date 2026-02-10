@@ -1,30 +1,86 @@
-import { useNavigate } from "react-router-dom"
+import { supabase } from "../../supabaseClient";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+function Login() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-
-    const goToHome = () => {
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
         navigate("/home");
-    }
+      }
+    });
 
-    const goToProfile = () => {
-        navigate("/profile");
-    }
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
-    const goToChat = () => {
-        navigate("/chat");
-    }
+  return (
+    <div
+      style={{
+        minHeight: "100vh",      
+        backgroundColor: "#E5EAFF", 
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
 
-    return (
-        <div>
-            Login Page
+    <div
+      style={{
+        width: "400px",
+        margin: "4rem auto",
+        padding: "2rem",
+        borderRadius: "12px",
+        boxShadow: "0 0 12px rgba(0, 0, 0, 0.1)",
+        backgroundColor: "#ffffffdd",
+        textAlign: "center",
+      }}
+    >
+      <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
+        WeShare
+      </h1>
 
-            <button onClick={goToHome}>Go to Home</button>
-            <button onClick={goToProfile}>Go to Profile</button>
-            <button onClick={goToChat}>Go to Chat</button>
-        </div>
-    )
+      <p
+        style={{
+          fontSize: "1rem",
+          color: "#666",
+          marginBottom: "1.5rem",
+        }}
+      >
+        Welcome back! Please log in to continue.
+      </p>
+
+      <Auth
+        supabaseClient={supabase}
+          appearance={{
+            theme: ThemeSupa,
+            variables: {
+                default: {
+                    colors: {
+                        brand: "#90ABEF",
+                        brandAccent: "#90ABEF",
+                    },
+                },
+            },
+        }}
+        providers={[]}
+          localization={{
+            variables: {
+              sign_in: {
+                button_label: "Log in", 
+              },
+            },
+          }}
+
+      ></Auth>
+    </div>
+    </div>
+  );
 }
 
-export default Login
+export default Login;

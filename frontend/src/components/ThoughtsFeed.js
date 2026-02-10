@@ -10,7 +10,7 @@ export default function ThoughtsFeed({ thoughts }) {
           <div style={nameStyle}>{t.authorName || "User"}</div>
           <div style={contentStyle}>{t.content}</div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 14 }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 13 }}>
             <button style={replyBtnStyle}>Reply</button>
           </div>
         </div>

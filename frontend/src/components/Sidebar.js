@@ -1,13 +1,47 @@
+import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "../supabaseClient";
+
 export default function Sidebar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <div style={sidebarStyle}>
       <div style={topGroupStyle}>
-        <button style={iconBtnStyle}>👤</button>
-        <button style={iconBtnStyle}>🏠</button>
-        <button style={iconBtnStyle}>💬</button>
+        <button
+          style={navBtnStyle(location.pathname === "/profile")}
+          onClick={() => navigate("/profile")}
+          aria-label="Profile"
+        >
+          👤
+        </button>
+
+        <button
+          style={navBtnStyle(location.pathname === "/home")}
+          onClick={() => navigate("/home")}
+          aria-label="Home"
+        >
+          🏠
+        </button>
+
+        <button
+          style={navBtnStyle(location.pathname === "/chat")}
+          onClick={() => navigate("/chat")}
+          aria-label="Chat"
+        >
+          💬
+        </button>
       </div>
 
-      <button style={iconBtnStyle}>⏻</button>
+      <button
+        style={navBtnStyle(false)}
+        onClick={async () => { await supabase.auth.signOut();
+          navigate("/login");
+        }}
+        aria-label="Logout"
+      >
+        ⏻
+      </button>
     </div>
   );
 }
@@ -16,12 +50,12 @@ const sidebarStyle = {
   width: 80,
   height: "100vh",
   background: "#90ABEF",
-  padding: "20px 0",              
+  padding: "20px 0",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "space-between",
-  boxSizing: "border-box",        
+  boxSizing: "border-box",
 };
 
 const topGroupStyle = {
@@ -31,7 +65,7 @@ const topGroupStyle = {
   alignItems: "center",
 };
 
-const iconBtnStyle = {
+const baseBtn = {
   width: 56,
   height: 56,
   borderRadius: 16,
@@ -41,4 +75,12 @@ const iconBtnStyle = {
   display: "grid",
   placeItems: "center",
   fontSize: 22,
+  transition: "transform 120ms ease, filter 120ms ease, outline 120ms ease",
 };
+
+function navBtnStyle(active) {
+  return {
+    ...baseBtn,
+    outline: active ? "3px solid rgba(0,0,0,0.18)" : "none",
+  };
+}
