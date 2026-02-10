@@ -56,7 +56,7 @@ const FIELDS = [
   },
 ];
 
-const Info = () => {
+const Info = (props) => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     userName: "", gender: "", birth: "",
@@ -91,24 +91,27 @@ const Info = () => {
     navigate("/login");
   };
 
-  const handleSubmit = async () => {
-    setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { alert("No user logged in!"); setSaving(false); return; }
+const handleSubmit = async () => {
+  setSaving(true);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { alert("No user logged in!"); setSaving(false); return; }
 
-    const { error } = await supabase.from("info").upsert(
-      { user_id: user.id, ...form },
-      { onConflict: "user_id" }
-    );
+  const { error } = await supabase.from("info").upsert(
+    { user_id: user.id, ...form },
+    { onConflict: "user_id" }
+  );
 
-    setSaving(false);
-    if (error) {
-      console.error(error);
-      alert("Error saving: " + error.message);
-    } else {
-      navigate("/home");
+  setSaving(false);
+  if (error) {
+    console.error(error);
+    alert("Error saving: " + error.message);
+  } else {
+    if (props.onSaved) {
+      props.onSaved();
     }
-  };
+    navigate("/home");
+  }
+};
 
   const filledCount = Object.values(form).filter(Boolean).length;
   const progress = Math.round((filledCount / FIELDS.length) * 100);
