@@ -5,32 +5,30 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
+import Chat from "./pages/Chat/Chat";          
 import Profile from "./pages/Profile/Profile";
-import Chat from "./pages/Chat/Chat";
 import Qotd from "./pages/Home/Qotd";
 
 function App() {
   const [session, setSession] = useState(null);
-  const [checking, setChecking] = useState(true); // ✅ ADD THIS
+  const [checking, setChecking] = useState(true);
   const authed = !!session;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setChecking(false); // ✅ ADD THIS
+      setChecking(false);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setChecking(false); // ✅ ADD THIS
+      setChecking(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (checking) return null; // ✅ ADD THIS (or a loading screen)
+  if (checking) return null;
 
   return (
     <Routes>
@@ -45,17 +43,20 @@ function App() {
         path="/home"
         element={authed ? <Home /> : <Navigate to="/login" replace />}
       />
-      <Route
-        path="/qotd"
-        element={authed ? <Qotd /> : <Navigate to="/login" replace />}
-      />
+
       <Route
         path="/chat"
-        element={authed ? <Chat /> : <Navigate to="/chat" replace />}
+        element={authed ? <Chat session={session} /> : <Navigate to="/login" replace />}
       />
+
       <Route
         path="/profile"
         element={authed ? <Profile /> : <Navigate to="/login" replace />}
+      />
+
+      <Route
+        path="/qotd"
+        element={authed ? <Qotd /> : <Navigate to="/login" replace />}
       />
 
       <Route path="*" element={<Navigate to={authed ? "/home" : "/login"} replace />} />
