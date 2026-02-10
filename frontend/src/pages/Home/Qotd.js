@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { listQotdComments, createQotdComment } from "../../api/qotdComments";
 
+import { supabase } from "../../supabaseClient";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
+
 export default function Qotd() {
   const navigate = useNavigate();
 
@@ -13,11 +18,13 @@ export default function Qotd() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const data = await listQotdComments();
+        const { data: { user } } = await supabase.auth.getUser()
+        const data = await listQotdComments(user);
         setComments(data);
       } finally {
         setLoading(false);
@@ -29,11 +36,31 @@ export default function Qotd() {
   async function handlePost() {
     const trimmed = input.trim();
     if (!trimmed) return;
+    const { data: { user } } = await supabase.auth.getUser()
 
-    const newC = await createQotdComment({ text: trimmed });
+    const newC = await createQotdComment({ text: trimmed, user: user });
     setComments((prev) => [newC, ...prev]);
     setInput("");
   }
+
+  const handleConfirmClick = () => {
+    confirmAlert({
+      title: 'Are you ready to post?',
+      message: 'This move will overwrite any previous comments you made.',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => handlePost()
+        },
+        {
+          label: 'No',
+          onClick: () => {}
+        }
+      ]
+    });
+  };
+
+
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
@@ -81,7 +108,7 @@ export default function Qotd() {
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Write Your Comment...."
+              placeholder="Write Your Comment. Do note each user can only post one comment. If you write a new comment it will overwrite your previous comment!!"
               style={{
                 width: "100%",
                 minHeight: 110,
@@ -96,7 +123,7 @@ export default function Qotd() {
   
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
               <button
-                onClick={handlePost}
+                onClick={handleConfirmClick}
                 style={{
                   padding: "10px 22px",
                   borderRadius: 14,
@@ -132,10 +159,10 @@ export default function Qotd() {
                 }}
               >
                 <div style={{ fontSize: 18, fontWeight: 750, marginBottom: 6 }}>
-                  {c.author}
+                  {c.userName}
                 </div>
                 <div style={{ fontSize: 12, opacity: 0.9, lineHeight: 1.5 }}>
-                  {c.text}
+                  {c.comment}
                 </div>
   
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
