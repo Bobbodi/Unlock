@@ -1,9 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import defaultPfp from "../assets/images/default-pfp.jpg";
+import { useState } from "react";
+import "./ProfileImage.css";
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [userPfp, setUserPfp] = useState(defaultPfp);
 
   return (
     <div style={sidebarStyle}>
@@ -13,7 +18,11 @@ export default function Sidebar() {
           onClick={() => navigate("/profile")}
           aria-label="Profile"
         >
-          👤
+          <img
+            src={userPfp}
+            alt="Profile"
+            className="profile-icon"
+          />
         </button>
 
         <button
