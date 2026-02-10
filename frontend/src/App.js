@@ -1,24 +1,27 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { supabase } from './supabaseClient';
+import { useState, useEffect } from "react";
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
-import Profile from './pages/Profile/Profile';
-import Chat from './pages/Chat/Chat';
-import Qotd from './pages/Home/Qotd';
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} /> {/* Changed to Navigate to login */}
-        <Route path="/home" element={<Home />} />
-        <Route path="/qotd" element={<Qotd />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/chat" element={<Chat />} />
-      </Routes>
-    </Router>
-  );
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return session ? <Home /> : <Login />;
 }
 
 export default App;

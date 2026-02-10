@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -34,7 +35,9 @@ export default function Sidebar() {
 
       <button
         style={navBtnStyle(false)}
-        onClick={() => navigate("/login")}
+        onClick={async () => { await supabase.auth.signOut();
+          navigate("/login");
+        }}
         aria-label="Logout"
       >
         ⏻
