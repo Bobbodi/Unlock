@@ -1,15 +1,10 @@
 import "./App.css";
 import { supabase } from "./supabaseClient";
 import { useState, useEffect } from "react";
-import Home from './pages/Home/Home';
-import Login from './pages/Login/Login';
-import ChatPage from './pages/Chat/Chat';
-import Profile from './pages/Profile/Profile';
-import Info from "./pages/Info/Info";
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
+import Info from "./pages/Info/Info";
 import Chat from "./pages/Chat/Chat";          
 import Profile from "./pages/Profile/Profile";
 import Qotd from "./pages/Home/Qotd";
@@ -46,7 +41,6 @@ return (
     <Route path="/qotd" element={session ? <Qotd /> : <Navigate to="/login" />} />
   </Routes>
 );
-
 }
 
 export default App;
