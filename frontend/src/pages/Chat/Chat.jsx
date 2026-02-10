@@ -11,10 +11,45 @@ import {
   Window,
   LoadingIndicator,
   Thread,
+  ChannelPreviewMessenger,
+  useChatContext,
+  useChannelStateContext,
 } from "stream-chat-react";
-import "stream-chat-react/dist/css/v2/index.css";
+
+import "../../styles/stream-theme.css";
 
 import { useStream } from "../../contexts/streamClientContext";
+
+function CustomDMHeader() {
+  const { channel } = useChannelStateContext();
+  const myId = channel.getClient().userID;
+
+  const other = getOtherUser(channel, myId);
+  const title = other?.name || other?.username || other?.id || "Chat";
+
+  return (
+    <div style={{ padding: "7px", borderBottom: "1.5px solid #eee" }}>
+      <ChannelHeader title={title} />
+    </div>
+  );
+}
+
+function CustomDMPreview(props) {
+  const { client } = useChatContext();
+  const { channel } = props;
+
+  const myId = client.userID;
+
+  const other = getOtherUser(channel, myId);
+  const title = other?.name || other?.username || other?.id || "Chat";
+
+  return <ChannelPreviewMessenger {...props} displayTitle={title} />;
+}
+
+function getOtherUser(channel, myId) {
+  const members = Object.values(channel.state.members || {});
+  return members.map((m) => m.user).find((u) => u?.id && u.id !== myId);
+}
 
 export default function ChatPage() {
   const navigate = useNavigate();
@@ -72,6 +107,7 @@ export default function ChatPage() {
                 type: "messaging",
                 members: { $in: [streamClient.userID] },
               }}
+              Preview={CustomDMPreview}
             />
           </div>
 
@@ -79,7 +115,7 @@ export default function ChatPage() {
           <div style={{ flex: 1, minHeight: 0 }}>
             <Channel>
               <Window>
-                <ChannelHeader />
+                <CustomDMHeader />
                 <MessageList />
                 <MessageInput />
               </Window>

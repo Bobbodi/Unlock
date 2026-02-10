@@ -55,9 +55,23 @@ serve(async (req: Request) => {
 
   const user = userRes.user;
 
+  const { data: profile, error: profileErr } = await supabase
+    .from("info")
+    .select("userName")
+    .eq("user_id", user.id)
+    .single();
+
+  if (profileErr) {
+    // Not fatal — you can fallback
+    console.warn("profile lookup failed:", profileErr.message);
+  }
+
   // Take a display name from metadata
   const name =
-    (user.user_metadata?.name as string | undefined) ?? user.email ?? "User";
+    profile?.userName ||
+    (user.user_metadata?.name as string | undefined) ||
+    user.email ||
+    "User";
 
   // 3) Create Stream token using Stream SECRET (server-side)
   const serverClient = StreamChat.getInstance(
@@ -76,7 +90,12 @@ serve(async (req: Request) => {
 
   // 4) Return token + apiKey (apiKey is safe to expose)
   return new Response(
-    JSON.stringify({ apiKey: STREAM_API_KEY, token, userId: user.id, name }),
+    JSON.stringify({
+      apiKey: STREAM_API_KEY,
+      token,
+      userId: user.id,
+      userName: name,
+    }),
     {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     },

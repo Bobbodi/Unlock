@@ -6,6 +6,7 @@ const StreamContext = createContext(null);
 
 export function StreamProvider({ children }) {
   const [client, setClient] = useState(null);
+  const [streamUser, setStreamUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // track the currently connected Stream user id
@@ -45,7 +46,7 @@ export function StreamProvider({ children }) {
     );
 
     if (!res.ok) throw new Error(await res.text());
-    const { apiKey, token, userId } = await res.json();
+    const { apiKey, token, userId, userName } = await res.json();
 
     // if already connected as the same user, do nothing
     if (connectedUserIdRef.current === userId && client?.userID === userId) {
@@ -61,10 +62,11 @@ export function StreamProvider({ children }) {
     const stream = StreamChat.getInstance(apiKey);
 
     // connect user
-    await stream.connectUser({ id: userId }, token);
+    await stream.connectUser({ id: userId, name: userName }, token);
 
     connectedUserIdRef.current = userId;
     setClient(stream);
+    setStreamUser({ id: userId, userName });
   };
 
   useEffect(() => {
@@ -108,15 +110,12 @@ export function StreamProvider({ children }) {
     return () => {
       cancelled = true;
       authListener?.subscription?.unsubscribe();
-      // optional: disconnect when provider unmounts
-      // disconnectStream();
     };
-    // include `client` because we may disconnect it / compare userID
   }, [client]);
 
   return (
     <StreamContext.Provider
-      value={{ streamClient: client, streamLoading: loading }}
+      value={{ streamClient: client, streamLoading: loading, streamUser }}
     >
       {children}
     </StreamContext.Provider>
