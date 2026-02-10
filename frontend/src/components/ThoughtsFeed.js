@@ -7,7 +7,7 @@ export default function ThoughtsFeed({ thoughts }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {thoughts.map((t) => (
         <div key={t.id} style={cardStyle}>
-          <div style={nameStyle}>{t.authorName || "User"}</div>
+          <div style={nameStyle}>{t.authorName}</div>
           <div style={contentStyle}>{t.content}</div>
 
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 13 }}>
