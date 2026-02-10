@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Info = () => {
   const navigate = useNavigate();
@@ -8,13 +8,37 @@ const Info = () => {
   const [form, setForm] = useState({
     userName: "",
     gender: "",
-    birthYear: "",
-    birthMonth: "",
-    birthDay: "",
+    birth: "",
     funFact: "",
     animal: "",
     distressMethod: "",
   });
+
+  useEffect(() => {
+    const fetchInfo = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        const { data, error } = await supabase
+          .from("info")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+
+        if (data) {
+          setForm({
+            userName: data.userName || "",
+            gender: data.gender || "",
+            birth: data.birth || "",
+            funFact: data.funFact || "",
+            animal: data.animal || "",
+            distressMethod: data.distressMethod || "",
+          });
+        }
+      }
+    };
+    fetchInfo();
+  }, []);
 
   const handleChange = (key) => (e) => {
     setForm({ ...form, [key]: e.target.value });
@@ -25,9 +49,32 @@ const Info = () => {
     navigate("/login");
   };
 
-  const handleSubmit = () => {
-    console.log(form);
-    // later: save to supabase
+  const handleSubmit = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return alert("No user logged in!");
+
+    const { data, error } = await supabase
+      .from("info")
+      .upsert(
+        {
+          user_id: user.id,
+          userName: form.userName,
+          gender: form.gender,
+          birth: form.birth,
+          funFact: form.funFact,
+          animal: form.animal,
+          distressMethod: form.distressMethod,
+        },
+        { onConflict: "user_id" }
+      );
+
+    if (error) {
+      console.error(error);
+      alert("Error saving your info: " + error.message);
+    } else {
+      alert("Info updated successfully!");
+      navigate("/home");
+    }
   };
 
   const goToHome = () => {
@@ -96,7 +143,7 @@ const Info = () => {
           <input
             type="text"
             value={form.userName}
-            onChange={handleChange("usserName")}
+            onChange={handleChange("userName")}
             style={inputStyle}
           />
         </div>
@@ -113,35 +160,12 @@ const Info = () => {
 
         <div>
           <p>Birthday</p>
-          <div
-            style={{
-              display: "flex",
-              gap: "0.5rem",
-              marginBottom: "0.8rem",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Year"
-              value={form.birthYear}
-              onChange={handleChange("birthYear")}
-              style={{ ...inputStyle, flex: 1 }}
-            />
-            <input
-              type="text"
-              placeholder="Month"
-              value={form.birthMonth}
-              onChange={handleChange("birthMonth")}
-              style={{ ...inputStyle, flex: 1 }}
-            />
-            <input
-              type="text"
-              placeholder="Day"
-              value={form.birthDay}
-              onChange={handleChange("birthDay")}
-              style={{ ...inputStyle, flex: 1 }}
-            />
-          </div>
+          <input
+            type="date"
+            value={form.birth}
+            onChange={handleChange("birth")}
+            style={inputStyle}
+          />
         </div>
 
         <div>
@@ -165,7 +189,7 @@ const Info = () => {
         <div>
           <p>What do you usually do to destress?</p>
           <textarea
-            value={form.distress}
+            value={form.distressMethod}
             onChange={handleChange("distressMethod")}
             style={textareaStyle}
           />
@@ -182,7 +206,7 @@ const Info = () => {
             Logout
           </button>
 
-          <button onClick={goToHome} style={buttonStyle}>
+          <button onClick={handleSubmit} style={buttonStyle}>
             Proceed to Home
           </button>
         </div>
@@ -191,4 +215,4 @@ const Info = () => {
   );
 };
 
-export default Info;
+export default Info
