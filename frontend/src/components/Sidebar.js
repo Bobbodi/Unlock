@@ -30,6 +30,7 @@ export default function Sidebar() {
             style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
           />
         </button>
+        <p style={{ color: "white", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Profile</p>
 
         <button
           style={navBtnStyle(location.pathname === "/home")}
@@ -42,6 +43,7 @@ export default function Sidebar() {
             style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center"  }}
           />
         </button>
+        <p style={{ color: "white", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Home</p>
 
         <button
           style={navBtnStyle(location.pathname === "/chat")}
@@ -54,8 +56,10 @@ export default function Sidebar() {
             style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
           />
         </button>
+        <p style={{ color: "white", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 10 }}> Chat</p>
       </div>
 
+      <div>
       <button
         style={navBtnStyle(false)}
         onClick={async () => {
@@ -66,6 +70,8 @@ export default function Sidebar() {
       >
         ⏻
       </button>
+      <p style={{ color: "white", fontSize: 14, textAlign: "center", marginTop: 10, marginBottom: 0 }}>Logout</p>
+      </div>
     </div>
   );
 }
