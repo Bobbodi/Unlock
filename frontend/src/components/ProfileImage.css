@@ -13,9 +13,3 @@
   height: 100%;
   object-fit: cover; /* key line */
 }
-
-.profile-icon {
-  width: 80%;
-  border-radius: 20%;
-  object-fit: cover;
-}

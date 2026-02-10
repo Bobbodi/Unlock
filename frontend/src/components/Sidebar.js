@@ -1,6 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import defaultPfp from "../assets/images/default-pfp.jpg";
+import homeIcon from "../assets/images/home-icon-center.png";
+import chatIcon from "../assets/images/chat-icon.jpg";
+import { SIDEBAR_IMAGE_SIZE } from "../utils/constants";
+
 import { useState } from "react";
 import "./ProfileImage.css";
 
@@ -21,7 +25,7 @@ export default function Sidebar() {
           <img
             src={userPfp}
             alt="Profile"
-            className="profile-icon"
+            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
           />
         </button>
 
@@ -30,7 +34,11 @@ export default function Sidebar() {
           onClick={() => navigate("/home")}
           aria-label="Home"
         >
-          🏠
+          <img
+            src={homeIcon}
+            alt="Home"
+            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center"  }}
+          />
         </button>
 
         <button
@@ -38,7 +46,11 @@ export default function Sidebar() {
           onClick={() => navigate("/chat")}
           aria-label="Chat"
         >
-          💬
+          <img
+            src={chatIcon}
+            alt="Chat"
+            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
+          />
         </button>
       </div>
 
@@ -90,6 +102,6 @@ const baseBtn = {
 function navBtnStyle(active) {
   return {
     ...baseBtn,
-    outline: active ? "3px solid rgba(0,0,0,0.18)" : "none",
+    outline: active ? "3px solid #384b95" : "none",
   };
 }
