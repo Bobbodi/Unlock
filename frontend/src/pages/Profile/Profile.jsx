@@ -4,8 +4,10 @@ import ProfileImage from "../../components/ProfileImage";
 import { PROFILEIMAGESIZE } from "../../utils/constants";
 import { useState, useEffect } from "react";
 import defaultPfp from "../../assets/images/default-pfp.jpg";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
+  const navigate = useNavigate();
   const [userPfp, setUserPfp] = useState(defaultPfp);
   const [userName, setUserName] = useState("Ruby Chan");
   const [userGender, setUserGender] = useState("Female");
@@ -21,6 +23,10 @@ export default function Profile() {
     new Date("2025-01-12T14:30:00")
   );
   const [mounted, setMounted] = useState(false);
+
+  const goToInfo = () => {
+    navigate("/info");
+  };
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80);
@@ -398,13 +404,29 @@ export default function Profile() {
 
         <main className="profile-main">
           {/* Header */}
-          <div className={`profile-header ${mounted ? "visible" : ""}`}>
-            <div className="profile-header-eyebrow">Your profile</div>
-            <h1 className="profile-header-title">
-              My Gallery
-            </h1>
-            <div className="profile-header-divider" />
-          </div>
+<div className={`profile-header ${mounted ? "visible" : ""}`}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div>
+      <div className="profile-header-eyebrow">Your profile</div>
+      <h1 className="profile-header-title">
+        My Gallery
+      </h1>
+    </div>
+    <button onClick={goToInfo} style={{
+      padding: '8px 16px',
+      borderRadius: '6px',
+      border: '1px solid #2b4bbd',
+      background: 'white',
+      color: '#2b4bbd',
+      cursor: 'pointer',
+      fontSize: '1rem',
+      fontFamily: 'Outfit, sans-serif',
+    }}>
+      Edit Profile
+    </button>
+  </div>
+  <div className="profile-header-divider" />
+</div>
 
           {/* Hero */}
           <div className={`profile-hero ${mounted ? "visible" : ""}`}>
