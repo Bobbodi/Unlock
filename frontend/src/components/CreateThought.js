@@ -3,11 +3,20 @@ import { useState } from "react";
 export default function CreateThought({ defaultVisibility, onClose, onSubmit }) {
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState(defaultVisibility || "all");
+  const [isAnonymous, setIsAnonymous] = useState(false);
+
+  function setVisibilitySafe(v) {
+    setVisibility(v);
+    if (v === "friends") setIsAnonymous(false);
+  }
 
   function post() {
     const trimmed = content.trim();
     if (!trimmed) return;
-    onSubmit({ content: trimmed, visibility });
+
+    const safeAnon = visibility === "friends" ? false : isAnonymous;
+
+    onSubmit({ content: trimmed, visibility, isAnonymous: safeAnon });
   }
 
   return (
@@ -15,7 +24,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Tenor+Sans&display=swap');
 
-        /* ── Backdrop ── */
         .ct-backdrop {
           position: fixed;
           inset: 0;
@@ -35,7 +43,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           to   { opacity: 1; }
         }
 
-        /* ── Modal card ── */
         .ct-modal {
           width: 100%;
           max-width: 560px;
@@ -51,7 +58,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           overflow: hidden;
         }
 
-        /* Subtle top-edge accent */
         .ct-modal::before {
           content: "";
           position: absolute;
@@ -66,7 +72,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           to   { opacity: 1; transform: translateY(0)    scale(1);    }
         }
 
-        /* ── Header ── */
         .ct-header {
           display: flex;
           justify-content: space-between;
@@ -123,7 +128,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           border-color: rgba(43, 75, 189, 0.3);
         }
 
-        /* ── Textarea ── */
         .ct-textarea {
           width: 100%;
           padding: 14px 16px;
@@ -153,15 +157,14 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           box-shadow: 0 0 0 3px rgba(43, 75, 189, 0.08);
         }
 
-        /* ── Footer row ── */
         .ct-footer {
           display: flex;
           justify-content: space-between;
-          align-items: center;
+          align-items: flex-end;
           margin-top: 18px;
+          gap: 16px;
         }
 
-        /* ── Visibility radio group ── */
         .ct-vis-group {
           display: flex;
           gap: 4px;
@@ -183,9 +186,7 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           user-select: none;
         }
 
-        .ct-vis-label input[type="radio"] {
-          display: none;
-        }
+        .ct-vis-label input[type="radio"] { display: none; }
 
         .ct-vis-label.selected {
           background: #fff;
@@ -193,7 +194,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           box-shadow: 0 1px 4px rgba(43, 75, 189, 0.12);
         }
 
-        /* ── Post button ── */
         .ct-post-btn {
           font-family: 'Tenor Sans', sans-serif;
           font-size: 11px;
@@ -211,11 +211,9 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           box-shadow:
             0 4px 16px rgba(43, 75, 189, 0.35),
             inset 0 1px 0 rgba(255,255,255,0.1);
-          transition:
-            transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-            box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-            opacity 0.2s;
+          transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
           outline: none;
+          white-space: nowrap;
         }
 
         .ct-post-btn:hover {
@@ -223,13 +221,6 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
           box-shadow:
             0 8px 24px rgba(43, 75, 189, 0.45),
             inset 0 1px 0 rgba(255,255,255,0.15);
-        }
-
-        .ct-post-btn:active {
-          transform: translateY(0);
-          box-shadow:
-            0 2px 8px rgba(43, 75, 189, 0.3),
-            inset 0 1px 0 rgba(255,255,255,0.08);
         }
 
         .ct-post-btn:disabled {
@@ -241,17 +232,18 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
 
       <div className="ct-backdrop" onClick={onClose}>
         <div className="ct-modal" onClick={(e) => e.stopPropagation()}>
-
-          {/* Header */}
           <div className="ct-header">
             <div>
               <p className="ct-eyebrow">New</p>
-              <h3 className="ct-title">Share a <em>Thought</em></h3>
+              <h3 className="ct-title">
+                Share a <em>Thought</em>
+              </h3>
             </div>
-            <button className="ct-close" onClick={onClose} aria-label="Close">✕</button>
+            <button className="ct-close" onClick={onClose} aria-label="Close">
+              ✕
+            </button>
           </div>
 
-          {/* Textarea */}
           <textarea
             className="ct-textarea"
             rows={4}
@@ -260,29 +252,59 @@ export default function CreateThought({ defaultVisibility, onClose, onSubmit }) 
             placeholder="What's on your mind…"
           />
 
-          {/* Footer: visibility + post */}
           <div className="ct-footer">
-            <div className="ct-vis-group">
-              <label className={`ct-vis-label${visibility === "all" ? " selected" : ""}`}>
-                <input type="radio" checked={visibility === "all"} onChange={() => setVisibility("all")} />
-                All
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {/* ✅ CHANGE 3: checkbox is disabled when visibility === "friends" */}
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  fontFamily: "Tenor Sans, sans-serif",
+                  fontSize: 11,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#4a63b5",
+                  userSelect: "none",
+                  opacity: visibility === "friends" ? 0.5 : 1,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={isAnonymous}
+                  disabled={visibility === "friends"} 
+                  onChange={(e) => setIsAnonymous(e.target.checked)}
+                />
+                Post anonymously
               </label>
-              <label className={`ct-vis-label${visibility === "friends" ? " selected" : ""}`}>
-                <input type="radio" checked={visibility === "friends"} onChange={() => setVisibility("friends")} />
-                Friends
-              </label>
+
+              {/* radio buttons + use setVisibilitySafe */}
+              <div className="ct-vis-group">
+                <label className={`ct-vis-label${visibility === "all" ? " selected" : ""}`}>
+                  <input
+                    type="radio"
+                    checked={visibility === "all"}
+                    onChange={() => setVisibilitySafe("all")}
+                  />
+                  All
+                </label>
+
+                <label className={`ct-vis-label${visibility === "friends" ? " selected" : ""}`}>
+                  <input
+                    type="radio"
+                    checked={visibility === "friends"}
+                    onChange={() => setVisibilitySafe("friends")}
+                  />
+                  Friends
+                </label>
+              </div>
             </div>
 
-            <button
-              className="ct-post-btn"
-              onClick={post}
-              disabled={!content.trim()}
-            >
+            <button className="ct-post-btn" onClick={post} disabled={!content.trim()}>
               <em style={{ fontStyle: "normal", opacity: 0.75 }}>✦</em>
               Post
             </button>
           </div>
-
         </div>
       </div>
     </>
