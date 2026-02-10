@@ -68,6 +68,69 @@ function getOtherUser(channel, myId) {
   return members.map((m) => m.user).find((u) => u?.id && u.id !== myId);
 }
 
+function EmptyChat() {
+  return (
+    <div
+      style={{ textAlign: "center", padding: "80px 16px", color: "#1a2255" }}
+    >
+      {/* <img
+        src={emptyImg}
+        alt="Start chatting"
+        style={{ width: 180, opacity: 0.9, marginBottom: 18 }}
+      /> */}
+      <div
+        style={{
+          fontFamily: "Tenor Sans, sans-serif",
+          fontSize: 14,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
+      >
+        Say hi ✦
+      </div>
+      <div
+        style={{
+          marginTop: 10,
+          fontFamily: "Cormorant Garamond, serif",
+          fontSize: 18,
+          opacity: 0.75,
+        }}
+      >
+        No messages yet — start the conversation.
+      </div>
+    </div>
+  );
+}
+
+function EmptyChannels() {
+  return (
+    <div
+      style={{ textAlign: "center", padding: "60px 16px", color: "#1a2255" }}
+    >
+      <div
+        style={{
+          fontFamily: "Tenor Sans, sans-serif",
+          fontSize: 14,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
+      >
+        No chats yet ✦
+      </div>
+      <div
+        style={{
+          marginTop: 10,
+          fontFamily: "Cormorant Garamond, serif",
+          fontSize: 18,
+          opacity: 0.75,
+        }}
+      >
+        Start a conversation from QOTD or Home.
+      </div>
+    </div>
+  );
+}
+
 export default function ChatPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -169,12 +232,13 @@ export default function ChatPage() {
                 }}
                 Preview={CustomDMPreview}
                 setActiveChannelOnMount={false}
+                EmptyStateIndicator={EmptyChannels}
               />
             </div>
 
             {/* Right chat window */}
             <div style={{ flex: 1, minHeight: 0 }}>
-              <Channel>
+              <Channel EmptyStateIndicator={EmptyChat}>
                 <Window>
                   <CustomDMHeader />
                   <MessageList />
