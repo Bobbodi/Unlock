@@ -86,15 +86,34 @@ const Info = (props) => {
 
   const handleChange = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
+const handleCancel = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: existingData } = await supabase
+      .from("info")
+      .select("userName")
+      .eq("user_id", user.id)
+      .single();
+    
+    if (existingData) {
+      navigate("/profile");
+    } else {
+      await supabase.auth.signOut();
+      navigate("/login");
+    }
+  }
+};
 
 const handleSubmit = async () => {
   setSaving(true);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) { alert("No user logged in!"); setSaving(false); return; }
+
+  const { data: existingData } = await supabase
+    .from("info")
+    .select("userName")
+    .eq("user_id", user.id)
+    .single();
 
   const { error } = await supabase.from("info").upsert(
     { user_id: user.id, ...form },
@@ -106,10 +125,7 @@ const handleSubmit = async () => {
     console.error(error);
     alert("Error saving: " + error.message);
   } else {
-    if (props.onSaved) {
-      props.onSaved();
-    }
-    navigate("/home");
+    navigate(existingData ? "/profile" : "/home"); //check if editing or first time
   }
 };
 
@@ -504,8 +520,8 @@ const handleSubmit = async () => {
 
           {/* Footer */}
           <div className="info-footer">
-            <button className="info-logout-btn" onClick={handleLogout}>
-              Sign out
+            <button className="info-logout-btn" onClick={handleCancel}>
+              Go back
             </button>
             <button
               className="info-submit-btn"
