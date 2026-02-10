@@ -52,7 +52,7 @@ function Login() {
           marginBottom: "1.5rem",
         }}
       >
-        Welcome back! Please sign in to continue.
+        Welcome back! Please log in to continue.
       </p>
 
       <Auth
@@ -69,6 +69,14 @@ function Login() {
             },
         }}
         providers={[]}
+          localization={{
+            variables: {
+              sign_in: {
+                button_label: "Log in", 
+              },
+            },
+          }}
+
       ></Auth>
     </div>
     </div>
