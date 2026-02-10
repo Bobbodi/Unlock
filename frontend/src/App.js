@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Info from "./pages/Info/Info";
-import Chat from "./pages/Chat/Chat";          
+import ChatPage from "./pages/Chat/Chat";          
 import Profile from "./pages/Profile/Profile";
 import Qotd from "./pages/Home/Qotd";
 
