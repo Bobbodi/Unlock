@@ -2,7 +2,7 @@
  * ThoughtsFeed
  * 
  * UI component that displays a vertical list of thought cards. 
- * If 'thoughts' is empty or not provided, "No thoughts yet" message will be shown to the user
+ * If 'thoughts' is empty or not provided, "No thoughts yet" message will be shown to the user.
  *
  * @param {{thoughts}} param0
  * array of thought objects to display 

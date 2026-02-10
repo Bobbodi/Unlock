@@ -1,3 +1,8 @@
+/**
+ * This file contains helper functions that talk to Supabase for the "thoughts" feature for WeShare.
+ * It reads thoughts from the "thoughts" table, inserts a new thought forthe currently authenticate user 
+ * and joins each thought with the "info" table to display the author's userName.
+ */
 import { supabase } from "../supabaseClient";
 
 // tab = "all" | "friends"
@@ -20,7 +25,7 @@ export async function listThoughts(tab) {
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-
+   // link to supabase
   return (data || []).map((t) => ({
     id: t.thoughts_id,
     user_id: t.user_id,
@@ -31,6 +36,11 @@ export async function listThoughts(tab) {
   }));
 }
 
+/**
+ * This function insert a new thought into the "thoughts" database table under the currently logged-in user.
+ * @param {{content, visibility}} param0 
+ * 
+ */
 export async function createThought({ content, visibility }) {
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
   if (userErr) throw userErr;
