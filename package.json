@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/Bobbodi/Unlock#readme",
   "dependencies": {
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
     "supabase": "^2.76.6"
   }
 }
