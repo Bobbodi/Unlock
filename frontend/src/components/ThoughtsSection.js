@@ -43,10 +43,14 @@ export default function ThoughtsSection() {
         }}
       >
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => setActiveTab("all")} style={tabStyle(activeTab === "all")}>
+          <button 
+            className="button" 
+            onClick={() => setActiveTab("all")} 
+            style={tabStyle(activeTab === "all")}>
             All
           </button>
           <button
+            className="button"
             onClick={() => setActiveTab("friends")}
             style={tabStyle(activeTab === "friends")}
           >
@@ -55,6 +59,7 @@ export default function ThoughtsSection() {
         </div>
 
         <button
+          className="button"
           onClick={() => setOpenModal(true)}
           style={{
             padding: "10px 16px",
@@ -64,9 +69,10 @@ export default function ThoughtsSection() {
             color: "white",
             fontWeight: 700,
             cursor: "pointer",
+            
           }}
         >
-          Share Your Thought +
+          Share Your Thoughts +
         </button>
       </div>
 

@@ -2,10 +2,10 @@ import "./App.css";
 import { supabase } from "./supabaseClient";
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
-import Chat from "./pages/Chat/Chat";          
+import Info from "./pages/Info/Info";
+import ChatPage from "./pages/Chat/Chat";          
 import Profile from "./pages/Profile/Profile";
 import Qotd from "./pages/Home/Qotd";
 
@@ -30,38 +30,17 @@ function App() {
 
   if (checking) return null;
 
-  return (
-    <Routes>
-      <Route path="/" element={<Navigate to={authed ? "/home" : "/login"} replace />} />
-
-      <Route
-        path="/login"
-        element={authed ? <Navigate to="/home" replace /> : <Login />}
-      />
-
-      <Route
-        path="/home"
-        element={authed ? <Home /> : <Navigate to="/login" replace />}
-      />
-
-      <Route
-        path="/chat"
-        element={authed ? <Chat session={session} /> : <Navigate to="/login" replace />}
-      />
-
-      <Route
-        path="/profile"
-        element={authed ? <Profile /> : <Navigate to="/login" replace />}
-      />
-
-      <Route
-        path="/qotd"
-        element={authed ? <Qotd /> : <Navigate to="/login" replace />}
-      />
-
-      <Route path="*" element={<Navigate to={authed ? "/home" : "/login"} replace />} />
-    </Routes>
-  );
+return (
+  <Routes>
+    <Route path="/" element={session ? <Navigate to="/home" /> : <Login />} />
+    <Route path="/login" element={session ? <Navigate to="/info" /> : <Login />} />
+    <Route path="/info" element={session ? <Info /> : <Navigate to="/login" />} />
+    <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
+    <Route path="/home" element={session ? <Home /> : <Navigate to="/login" />} />
+    <Route path="/chat" element={session ? <ChatPage /> : <Navigate to="/login" />} />
+    <Route path="/qotd" element={session ? <Qotd /> : <Navigate to="/login" />} />
+  </Routes>
+);
 }
 
 export default App;
