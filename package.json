@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Bobbodi/Unlock/issues"
   },
-  "homepage": "https://github.com/Bobbodi/Unlock#readme"
+  "homepage": "https://github.com/Bobbodi/Unlock#readme",
+  "dependencies": {
+    "supabase": "^2.76.6"
+  }
 }
