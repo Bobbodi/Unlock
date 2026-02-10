@@ -168,6 +168,7 @@ export default function ChatPage() {
                   members: { $in: [streamClient.userID] },
                 }}
                 Preview={CustomDMPreview}
+                setActiveChannelOnMount={false}
               />
             </div>
 
