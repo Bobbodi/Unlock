@@ -1,3 +1,13 @@
+/**
+ * ThoughtsFeed
+ * 
+ * UI component that displays a vertical list of thought cards. 
+ * If 'thoughts' is empty or not provided, "No thoughts yet" message will be shown to the user
+ *
+ * @param {{thoughts}} param0
+ * array of thought objects to display 
+ * @returns 
+ */
 export default function ThoughtsFeed({ thoughts }) {
   if (!thoughts || thoughts.length === 0) {
     return <p style={{ fontSize: 20, opacity: 0.7, marginTop: 10 }}>No thoughts yet.</p>;
