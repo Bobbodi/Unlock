@@ -3,12 +3,26 @@ import ThoughtsFeed from "./ThoughtsFeed";
 import CreateThought from "./CreateThought";
 import { listThoughts, createThought } from "../api/thoughts";
 
+/**
+ * ThoughtsSection
+ * 
+ * Display the "Space to Share" thoughts area with:
+ * 1). Tabs for filtering thoughts by either all (publicly) or friends
+ * 2). A button that opens a pop up for creating a new thought
+ * 3). A feed that displays thoughts for the selected tab
+ * 
+ * @returns {JSX.elements}
+ */
 export default function ThoughtsSection() {
   const [activeTab, setActiveTab] = useState("all");
   const [thoughts, setThoughts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Fetch thoughts whenever the active tab changes 
+   * which keeps the feed in sync with the selected visibility filter
+   */
   useEffect(() => {
     async function load() {
       setLoading(true);
@@ -22,13 +36,19 @@ export default function ThoughtsSection() {
     load();
   }, [activeTab]);
 
+  /**
+   * Handles the creation of new thought being posted either in all or friends
+   * @param {{content: string, visibility: "all" | "friends"}} param0 
+   */
   async function handleCreate({ content, visibility }) {
-    const newPost = await createThought({ content, visibility });
-    if (visibility === activeTab) {
-      setThoughts((prev) => [newPost, ...prev]);
+    try {
+      const newPost = await createThought({ content, visibility });
+      if (visibility === activeTab) setThoughts((prev) => [newPost, ...prev]);
+      setOpenModal(false);
+    } catch (e) {
+      alert(e.message || JSON.stringify(e));
     }
-    setOpenModal(false);
-  }
+  }  
 
   return (
     <>

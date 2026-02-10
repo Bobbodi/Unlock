@@ -1,0 +1,28 @@
+@layer stream, stream-overrides;
+
+@import "stream-chat-react/dist/css/v2/index.css" layer(stream);
+
+@layer stream-overrides {
+  .str-chat {
+    --str-chat__primary-color: #476ed0;
+    --str-chat__active-primary-color: #90abef;
+    --str-chat__surface-color: #e5eaff;
+    --str-chat__secondary-surface-color: #f7f9ff;
+    --str-chat__primary-surface-color: #e5eaff;
+    --str-chat__primary-surface-color-low-emphasis: #e5eaff;
+    --str-chat__avatar-background-color: #476ed0;
+    --str-chat__message-bubble-color: #1a3782;
+    --str-chat__card-attachment-color: #476ed0;
+  }
+  .str-chat__message-inner {
+    grid-template-areas:
+      "message-bubble options"
+      "reactions reactions";
+  }
+  .str-chat__message--me .str-chat__message-inner {
+    grid-template-areas:
+      "reminder reminder"
+      "options message-bubble"
+      "reactions reactions";
+  }
+}
