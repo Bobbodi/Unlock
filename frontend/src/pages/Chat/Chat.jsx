@@ -1,3 +1,4 @@
+import Sidebar from "../../components/Sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StreamChat } from "stream-chat";
@@ -118,43 +119,47 @@ export default function ChatPage() {
   }
 
   if (error) return <div style={{ padding: 16 }}>Error: {error}</div>;
-  if (!streamClient)
-    return (
-      <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 12,
-        }}
-      >
-        <LoadingIndicator size={50} />
-        Loading your chat...
-      </div>
-    );
 
   return (
     <div style={{ height: "100vh", display: "flex" }}>
-      <Chat client={streamClient} theme="messaging light">
-        {/* Left sidebar */}
-        <div style={{ width: 320, borderRight: "1px solid #eee" }}>
-          <ChannelList />
-        </div>
+      <Sidebar />
 
-        {/* Right chat window */}
-        <div style={{ flex: 1, minHeight: 0 }}>
-          <Channel>
-            <Window>
-              <ChannelHeader />
-              <MessageList />
-              <MessageInput />
-            </Window>
-            <Thread />
-          </Channel>
+      {!streamClient ? (
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 12,
+          }}
+        >
+          <LoadingIndicator size={50} />
+          Loading your chat...
         </div>
-      </Chat>
+      ) : (
+        <Chat client={streamClient} theme="messaging light">
+          {/* Left channel list */}
+          <div style={{ width: 320, borderRight: "1px solid #eee" }}>
+            <ChannelList />
+          </div>
+
+          {/* Right chat window */}
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <Channel>
+              <Window>
+                <ChannelHeader />
+                <MessageList />
+                <MessageInput />
+              </Window>
+              <Thread />
+            </Channel>
+          </div>
+        </Chat>
+      )}
     </div>
   );
 }
