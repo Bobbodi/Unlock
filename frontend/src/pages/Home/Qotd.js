@@ -23,8 +23,8 @@ export default function Qotd() {
     async function load() {
       setLoading(true);
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        const data = await listQotdComments(user);
+        
+        const data = await listQotdComments();
         setComments(data);
       } finally {
         setLoading(false);
@@ -38,8 +38,13 @@ export default function Qotd() {
     if (!trimmed) return;
     const { data: { user } } = await supabase.auth.getUser()
 
-    const newC = await createQotdComment({ text: trimmed, user: user });
-    setComments((prev) => [newC, ...prev]);
+    const newC = await createQotdComment({ text: trimmed});
+    setComments((prev) => { 
+      //remove old copy of curr user comment on ui.
+      //so take all except comment of curr user id from prev
+      const updated = prev.filter(c => c.id !== user.id);
+      return [newC, ...updated] 
+    });
     setInput("");
   }
 

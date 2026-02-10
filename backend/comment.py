@@ -33,14 +33,14 @@ def post_message(userID, userMSG) -> None:
     return "comment is inserted"
 
 
-@commentapp.route('/commentRetrieve/<userName>')
-def get_all_comments(userName):
+@commentapp.route('/commentRetrieve')
+def get_all_comments():
     # fetch all rows from the table's comment section incluidng username + userid
     response = (
         #not sure if id is required right now but perhaps to connect it might be
         #filter to only show rows where comment is not empty string
         #filter away current user's comment as well
-        supabase.table("users").select('userName, comment, id').neq("comment", "").neq("userName", userName).execute()
+        supabase.table("users").select('userName, comment, id').neq("comment", "").execute()
     )
 
     print(f'the resp data is {response.data}')
