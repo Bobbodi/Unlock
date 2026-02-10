@@ -29,8 +29,6 @@ export default function ChatPage() {
 
     (async () => {
       // DEV auto-login (temporary)
-      await supabase.auth.signOut(); // clears any stale token from other projects
-
       const { data: loginData, error: loginError } =
         await supabase.auth.signInWithPassword({
           email: DEV_EMAIL,
