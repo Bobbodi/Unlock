@@ -23,12 +23,14 @@ export default function ThoughtsSection() {
   }, [activeTab]);
 
   async function handleCreate({ content, visibility }) {
-    const newPost = await createThought({ content, visibility });
-    if (visibility === activeTab) {
-      setThoughts((prev) => [newPost, ...prev]);
+    try {
+      const newPost = await createThought({ content, visibility });
+      if (visibility === activeTab) setThoughts((prev) => [newPost, ...prev]);
+      setOpenModal(false);
+    } catch (e) {
+      alert(e.message || JSON.stringify(e));
     }
-    setOpenModal(false);
-  }
+  }  
 
   return (
     <>
