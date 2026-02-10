@@ -9,10 +9,21 @@ import { SIDEBAR_IMAGE_SIZE } from "../utils/constants";
 import { useState } from "react";
 import "./ProfileImage.css";
 
+function labelStyle(active) {
+  return {
+    color: "#384b95",
+    fontFamily: "'Tenor Sans', sans-serif",
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: -20,
+    marginBottom: 0,
+    fontWeight: active ? 700 : 400,
+  };
+}
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { streamClient, streamLoading } = useStream();
 
   const [userPfp, setUserPfp] = useState(defaultPfp);
 
@@ -27,10 +38,16 @@ export default function Sidebar() {
           <img
             src={userPfp}
             alt="Profile"
-            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
+            style={{
+              width: SIDEBAR_IMAGE_SIZE,
+              height: SIDEBAR_IMAGE_SIZE,
+              objectFit: "cover",
+              borderRadius: 16,
+              objectPosition: "center",
+            }}
           />
         </button>
-        <p style={{ color: "#384b95", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Profile</p>
+        <p style={labelStyle(location.pathname === "/profile")}>Profile</p>
 
         <button
           style={navBtnStyle(location.pathname === "/home")}
@@ -40,10 +57,16 @@ export default function Sidebar() {
           <img
             src={homeIcon}
             alt="Home"
-            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center"  }}
+            style={{
+              width: SIDEBAR_IMAGE_SIZE,
+              height: SIDEBAR_IMAGE_SIZE,
+              objectFit: "cover",
+              borderRadius: 16,
+              objectPosition: "center",
+            }}
           />
         </button>
-        <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Home</p>
+        <p style={labelStyle(location.pathname === "/home")}>Home</p>
 
         <button
           style={navBtnStyle(location.pathname === "/chat")}
@@ -53,24 +76,41 @@ export default function Sidebar() {
           <img
             src={chatIcon}
             alt="Chat"
-            style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
+            style={{
+              width: SIDEBAR_IMAGE_SIZE,
+              height: SIDEBAR_IMAGE_SIZE,
+              objectFit: "cover",
+              borderRadius: 16,
+              objectPosition: "center",
+            }}
           />
         </button>
-        <p style={{ color: "#384b95", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 10 }}> Chat</p>
+        <p style={labelStyle(location.pathname === "/chat")}>Chat</p>
       </div>
 
       <div>
-      <button
-        style={navBtnStyle(false)}
-        onClick={async () => {
-          await supabase.auth.signOut();
-          navigate("/login");
-        }}
-        aria-label="Logout"
-      >
-        ⏻
-      </button>
-      <p style={{ color: "#384b95", fontSize: 14, textAlign: "center", marginTop: 10, marginBottom: 0 }}>Logout</p>
+        <button
+          style={navBtnStyle(false)}
+          onClick={async () => {
+            await supabase.auth.signOut();
+            navigate("/login");
+          }}
+          aria-label="Logout"
+        >
+          ⏻
+        </button>
+        <p
+          style={{
+            color: "#384b95",
+            fontSize: 14,
+            fontFamily: "'Tenor Sans', sans-serif",
+            textAlign: "center",
+            marginTop: 10,
+            marginBottom: 0,
+          }}
+        >
+          Logout
+        </p>
       </div>
     </div>
   );
@@ -86,6 +126,9 @@ const sidebarStyle = {
   alignItems: "center",
   justifyContent: "space-between",
   boxSizing: "border-box",
+  minWidth: 80,
+  boxShadow: "2px 0 15px rgba(20, 30, 100, 0.35)",
+  zIndex: 5,
 };
 
 const topGroupStyle = {
@@ -111,6 +154,6 @@ const baseBtn = {
 function navBtnStyle(active) {
   return {
     ...baseBtn,
-    outline: active ? "3px solid #384b95" : "none",
+    outline: active ? "2px solid #384b95" : "none",
   };
 }
