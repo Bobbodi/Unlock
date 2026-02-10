@@ -1,6 +1,6 @@
 import Sidebar from "../../components/Sidebar";
 import ProfileImage from "../../components/ProfileImage";
-import ProfileSummary from "../../components/ProfileSummary";
+
 import { PROFILEIMAGESIZE } from "../../utils/constants";
 import { useState, useEffect } from "react";
 import defaultPfp from "../../assets/images/default-pfp.jpg";

@@ -7,7 +7,7 @@ export default function Qotd() {
   const navigate = useNavigate();
 
   const [question] = useState(
-    "Do you think mental health is something that should be talked about more today?" // placeholder question
+    "Do you think mental health is something that should be talked about more today?"
   );
   const [comments, setComments] = useState([]);
   const [input, setInput] = useState("");
@@ -29,135 +29,505 @@ export default function Qotd() {
   async function handlePost() {
     const trimmed = input.trim();
     if (!trimmed) return;
-
     const newC = await createQotdComment({ text: trimmed });
     setComments((prev) => [newC, ...prev]);
     setInput("");
   }
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <Sidebar />
-  
-      <main style={{ flex: 1, overflowY: "auto", padding: 24 }}>
-        <button
-          onClick={() => navigate("/home")}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "10px 16px",
-            borderRadius: 16,
-            border: "none",
-            background: "#c2ceff",
-            color: "#2b4bbd",
-            fontWeight: 800,
-            cursor: "pointer",
-            marginBottom: 16,
-          }}
-        >
-          <span style={{ fontSize: 18 }}>←</span>
-          Back
-        </button>
-  
-        <h1 style={{ marginTop: 0 }}>Question Of The Day</h1>
-  
-        {/* QOTD card */}
-        <div
-          style={{
-            width: "100%",
-            background: "#cdd5ff",
-            borderRadius: 26,
-            padding: 22,
-            boxSizing: "border-box",
-            marginBottom: 22,
-          }}
-        >
-          <div style={{ fontSize: 22, fontWeight: 750, marginBottom: 14 }}>
-            {question}
-          </div>
-  
-          <div style={{ background: "#dfe6ff", borderRadius: 22, padding: 18 }}>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Write Your Comment...."
-              style={{
-                width: "100%",
-                minHeight: 110,
-                resize: "none",
-                border: "none",
-                outline: "none",
-                background: "transparent",
-                fontSize: 14,
-                boxSizing: "border-box",
-              }}
-            />
-  
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
-              <button
-                onClick={handlePost}
-                style={{
-                  padding: "10px 22px",
-                  borderRadius: 14,
-                  border: "none",
-                  background: "#c2ceff",
-                  color: "#2b4bbd",
-                  fontWeight: 800,
-                  cursor: "pointer",
-                }}
-              >
-                Post
-              </button>
-            </div>
-          </div>
-        </div>
-  
-        {/* Comments */}
-        {loading ? (
-          <p style={{ opacity: 0.7 }}>Loading...</p>
-        ) : comments.length === 0 ? (
-          <p style={{ opacity: 0.7 }}>No comments yet.</p>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            {comments.map((c) => (
-              <div
-                key={c.id}
-                style={{
-                  width: "100%",
-                  background: "#dfe6ff",
-                  borderRadius: 22,
-                  padding: 20,
-                  boxSizing: "border-box",
-                }}
-              >
-                <div style={{ fontSize: 18, fontWeight: 750, marginBottom: 6 }}>
-                  {c.author}
-                </div>
-                <div style={{ fontSize: 12, opacity: 0.9, lineHeight: 1.5 }}>
-                  {c.text}
-                </div>
-  
-                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Tenor+Sans&display=swap');
+
+        :root {
+          --bg: #f4f6ff;
+          --blue: #2b4bbd;
+          --navy: #1a2255;
+          --periwinkle: #c2ceff;
+          --border: rgba(43, 75, 189, 0.1);
+        }
+
+        /* ── Layout ── */
+        .qotd-page {
+          display: flex;
+          width: 100%;
+          height: 100vh;
+          overflow: hidden;
+          background: var(--bg);
+          position: relative;
+        }
+
+        /* Ambient orbs */
+        .qotd-page::before {
+          content: '';
+          position: fixed;
+          top: -140px;
+          right: -80px;
+          width: 580px;
+          height: 580px;
+          background: radial-gradient(circle, rgba(194, 206, 255, 0.55) 0%, transparent 68%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .qotd-bg-orb {
+          position: fixed;
+          bottom: -160px;
+          left: 140px;
+          width: 480px;
+          height: 480px;
+          background: radial-gradient(circle, rgba(43, 75, 189, 0.05) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        /* ── Main scroll area ── */
+        .qotd-main {
+          flex: 1;
+          overflow-y: auto;
+          padding: 28px 32px 48px;
+          position: relative;
+          z-index: 1;
+          scrollbar-width: thin;
+          scrollbar-color: var(--border) transparent;
+        }
+
+        .qotd-main::-webkit-scrollbar { width: 5px; }
+        .qotd-main::-webkit-scrollbar-track { background: transparent; }
+        .qotd-main::-webkit-scrollbar-thumb {
+          background: rgba(43, 75, 189, 0.12);
+          border-radius: 99px;
+        }
+
+        .qotd-content {
+          width: 100%;
+        }
+
+        /* ── Back button ── */
+        .qotd-back-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          padding: 8px 16px 8px 12px;
+          border-radius: 10px;
+          border: 1px solid rgba(43, 75, 189, 0.15);
+          background: rgba(194, 206, 255, 0.25);
+          color: var(--blue);
+          cursor: pointer;
+          margin-bottom: 24px;
+          transition: background 0.2s, border-color 0.2s, transform 0.2s cubic-bezier(0.23,1,0.32,1);
+          outline: none;
+        }
+
+        .qotd-back-btn:hover {
+          background: rgba(194, 206, 255, 0.45);
+          border-color: rgba(43, 75, 189, 0.28);
+          transform: translateX(-2px);
+        }
+
+        .qotd-back-arrow {
+          font-size: 14px;
+          line-height: 1;
+          transition: transform 0.2s cubic-bezier(0.23,1,0.32,1);
+        }
+
+        .qotd-back-btn:hover .qotd-back-arrow {
+          transform: translateX(-2px);
+        }
+
+        /* ── Page heading ── */
+        .qotd-page-eyebrow {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: rgba(43, 75, 189, 0.45);
+          margin: 0 0 7px;
+        }
+
+        .qotd-page-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 300;
+          font-size: 36px;
+          color: var(--navy);
+          margin: 0 0 22px;
+          line-height: 1;
+          letter-spacing: -0.01em;
+        }
+
+        .qotd-page-title em {
+          font-style: italic;
+          color: var(--blue);
+        }
+
+        /* ── Question card ── */
+        .qotd-question-card {
+          width: 100%;
+          border-radius: 22px;
+          background: linear-gradient(145deg, #90abef  0%, #788ddf 50%, #90abef  100%);
+          padding: 28px 30px;
+          box-sizing: border-box;
+          margin-bottom: 22px;
+          position: relative;
+          overflow: hidden;
+          box-shadow:
+            0 8px 32px rgba(20, 30, 100, 0.22),
+            0 2px 8px rgba(20, 30, 100, 0.14),
+            inset 0 1px 0 rgba(194, 206, 255, 0.1);
+        }
+
+        /* top glow */
+        .qotd-question-card::before {
+          content: '';
+          position: absolute;
+          top: -40%; left: 50%;
+          transform: translateX(-50%);
+          width: 70%; height: 80%;
+          background: radial-gradient(ellipse, rgba(160,180,255,0.15) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        /* corner accent */
+        .qotd-question-card::after {
+          content: '';
+          position: absolute;
+          bottom: 16px; right: 20px;
+          width: 40px; height: 40px;
+          border-right: 1px solid rgba(194, 206, 255, 0.1);
+          border-bottom: 1px solid rgba(194, 206, 255, 0.1);
+          pointer-events: none;
+        }
+
+        .qotd-question-label {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 0.26em;
+          text-transform: uppercase;
+          color: #000000;
+          margin: 0 0 12px;
+          position: relative;
+        }
+
+        .qotd-question-text {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 300;
+          font-size: 24px;
+          line-height: 1.45;
+          color: #000000;
+          margin: 0 0 22px;
+          position: relative;
+        }
+
+        /* ── Comment input area (inside the card) ── */
+        .qotd-input-wrap {
+          background: rgba(255, 255, 255, 0.07);
+          border: 1px solid rgba(194, 206, 255, 0.15);
+          border-radius: 16px;
+          padding: 16px 18px;
+          position: relative;
+        }
+
+        .qotd-textarea {
+          width: 100%;
+          min-height: 90px;
+          resize: none;
+          border: none;
+          outline: none;
+          background: transparent;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 16px;
+          font-weight: 300;
+          color: #000000;
+          line-height: 1.6;
+          font-size: 20px;
+          box-sizing: border-box;
+          caret-color: var(--periwinkle);
+        }
+
+        .qotd-textarea::placeholder {
+          color: rgba(194, 206, 255, 0.3);
+          font-style: italic;
+        }
+
+        .qotd-input-footer {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 10px;
+        }
+
+        /* ── Shared button style (Post / Reply) ── */
+        .qotd-action-btn {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 9px 20px;
+          border-radius: 10px;
+          border: none;
+          background: linear-gradient(135deg, #2b4bbd 0%, #1a2f85 100%);
+          color: #e8ecff;
+          cursor: pointer;
+          box-shadow:
+            0 4px 14px rgba(43, 75, 189, 0.4),
+            inset 0 1px 0 rgba(255,255,255,0.1);
+          transition:
+            transform 0.2s cubic-bezier(0.23,1,0.32,1),
+            box-shadow 0.2s cubic-bezier(0.23,1,0.32,1);
+          outline: none;
+        }
+
+        .qotd-action-btn:hover {
+          transform: translateY(-2px);
+          box-shadow:
+            0 8px 22px rgba(43, 75, 189, 0.45),
+            inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .qotd-action-btn:active {
+          transform: translateY(0);
+          box-shadow:
+            0 2px 8px rgba(43, 75, 189, 0.3),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .qotd-action-btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        /* ── Comments section ── */
+        .qotd-comments-header {
+          margin: 28px 0 16px;
+        }
+
+        .qotd-comments-eyebrow {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 0.26em;
+          text-transform: uppercase;
+          color: rgba(43, 75, 189, 0.45);
+          margin: 0 0 6px;
+        }
+
+        .qotd-comments-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 300;
+          font-size: 26px;
+          color: var(--navy);
+          margin: 0;
+          line-height: 1;
+        }
+
+        .qotd-comments-title em {
+          font-style: italic;
+          color: var(--blue);
+        }
+
+        .qotd-comments-rule {
+          margin-top: 12px;
+          height: 1px;
+          background: linear-gradient(90deg, var(--border) 0%, transparent 80%);
+          border: none;
+          margin-bottom: 18px;
+        }
+
+        /* ── Comment list ── */
+        .qotd-comments-list {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .qotd-comment-card {
+          width: 100%;
+          background: #fff;
+          border-radius: 18px;
+          padding: 20px 22px;
+          box-sizing: border-box;
+          border: 1px solid rgba(43, 75, 189, 0.08);
+          box-shadow: 0 2px 12px rgba(43, 75, 189, 0.06);
+          transition: box-shadow 0.2s, transform 0.2s cubic-bezier(0.23,1,0.32,1);
+          animation: comment-in 0.3s ease forwards;
+        }
+
+        .qotd-comment-card:hover {
+          box-shadow: 0 6px 24px rgba(43, 75, 189, 0.1);
+          transform: translateY(-1px);
+        }
+
+        @keyframes comment-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0);   }
+        }
+
+        .qotd-comment-author {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 12px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--navy);
+          margin: 0 0 8px;
+        }
+
+        .qotd-comment-text {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 17px;
+          font-weight: 300;
+          line-height: 1.6;
+          color: rgba(26, 34, 85, 0.8);
+          margin: 0;
+        }
+
+        .qotd-comment-footer {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 14px;
+        }
+
+        /* Reply button — lighter variant */
+        .qotd-reply-btn {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 7px 16px;
+          border-radius: 8px;
+          border: 1px solid rgba(43, 75, 189, 0.18);
+          background: transparent;
+          color: var(--blue);
+          cursor: pointer;
+          transition: background 0.18s, border-color 0.18s;
+          outline: none;
+        }
+
+        .qotd-reply-btn:hover {
+          background: rgba(194, 206, 255, 0.3);
+          border-color: rgba(43, 75, 189, 0.3);
+        }
+
+        /* Empty / loading states */
+        .qotd-state-msg {
+          font-family: 'Cormorant Garamond', serif;
+          font-style: italic;
+          font-size: 20px;
+          color: rgba(7, 16, 49, 0.4);
+          margin: 0;
+        }
+
+        .qotd-loading {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 24px 0;
+        }
+
+        .qotd-loading-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: rgba(43, 75, 189, 0.3);
+          animation: pulse-dot 1.2s ease-in-out infinite;
+        }
+
+        .qotd-loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .qotd-loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse-dot {
+          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+          40%            { opacity: 1;   transform: scale(1);   }
+        }
+      `}</style>
+
+      {/* Background orb */}
+      <div className="qotd-bg-orb" />
+
+      <div className="qotd-page">
+        <Sidebar />
+
+        <main className="qotd-main">
+          <div className="qotd-content">
+
+            {/* Back */}
+            <button className="qotd-back-btn" onClick={() => navigate("/home")}>
+              <span className="qotd-back-arrow">←</span>
+              Back
+            </button>
+
+            {/* Page title */}
+            <p className="qotd-page-eyebrow">Daily</p>
+            <h1 className="qotd-page-title">Question <em>of the Day</em></h1>
+
+            {/* Question card */}
+            <div className="qotd-question-card">
+              <p className="qotd-question-label">Today's question</p>
+              <p className="qotd-question-text">{question}</p>
+
+              <div className="qotd-input-wrap">
+                <textarea
+                  className="qotd-textarea"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Write your answer…"
+                />
+                <div className="qotd-input-footer">
                   <button
-                    style={{
-                      padding: "10px 22px",
-                      borderRadius: 14,
-                      border: "none",
-                      background: "#c2ceff",
-                      color: "#2b4bbd",
-                      fontWeight: 800,
-                      cursor: "pointer",
-                    }}
+                    className="qotd-action-btn"
+                    onClick={handlePost}
+                    disabled={!input.trim()}
                   >
-                    Reply
+                    <em style={{ fontStyle: "normal", opacity: 0.75 }}>✦</em>
+                    Post
                   </button>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Comments heading */}
+            <div className="qotd-comments-header">
+              <p className="qotd-comments-eyebrow">Responses</p>
+              <h2 className="qotd-comments-title">What <em>others</em> think</h2>
+              <hr className="qotd-comments-rule" />
+            </div>
+
+            {/* Comments */}
+            {loading ? (
+              <div className="qotd-loading">
+                <div className="qotd-loading-dot" />
+                <div className="qotd-loading-dot" />
+                <div className="qotd-loading-dot" />
+              </div>
+            ) : comments.length === 0 ? (
+              <p className="qotd-state-msg">No responses yet — be the first.</p>
+            ) : (
+              <div className="qotd-comments-list">
+                {comments.map((c) => (
+                  <div key={c.id} className="qotd-comment-card">
+                    <p className="qotd-comment-author">{c.author}</p>
+                    <p className="qotd-comment-text">{c.text}</p>
+                    <div className="qotd-comment-footer">
+                      <button className="qotd-reply-btn">
+                        ↩ Reply
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
-        )}
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
-}  
+}

@@ -11,7 +11,7 @@ export default function QuestionOfDay() {
         .qotd-card {
           position: relative;
           border-radius: 20px;
-          background: linear-gradient(145deg, #1a2255 0%, #2b3a8a 50%, #1e2d6b 100%);
+          background: linear-gradient(145deg, #90abef  0%, #4e61ae 20%, #1e2d6b 50%, #4e61ae 80%, #90abef  100%);
           overflow: hidden;
           cursor: pointer;
           transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
