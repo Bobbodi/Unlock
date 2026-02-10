@@ -28,7 +28,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 def post_message(userID, userName, userMSG) -> None:
     #code to include this message into supa database
     response = (
-        supabase.table('public.users').update({"comment": userMSG}).eq("id", userID).execute()
+        supabase.table('users').update({"comment": userMSG}).eq("id", userID).execute()
     )
     return "comment is inserted"
 
@@ -38,13 +38,16 @@ def get_all_comments():
     # fetch all rows from the table's comment section incluidng username + userid
     response = (
         #not sure if id is required but perhaps to connect it might be
-        supabase.table("public.users").select('userName, comment').execute()
+        supabase.table("users").select('userName, comment').execute()
     )
     #not too sure if jsonify then what
     print(f'the resp data is {response.data}')
     return jsonify(response.data)
 
+application = commentapp
 
+if __name__ == "__main__":
+    commentapp.run(debug=True)
 
 
 
