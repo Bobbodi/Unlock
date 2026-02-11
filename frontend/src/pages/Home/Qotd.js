@@ -1,30 +1,30 @@
 import Sidebar from "../../components/Sidebar";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Route, Router, useNavigate } from "react-router-dom";
 import { listQotdComments, createQotdComment } from "../../api/qotdComments";
 
 import { supabase } from "../../supabaseClient";
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { useStream } from "../../contexts/streamClientContext";
 
 export default function Qotd() {
   const navigate = useNavigate();
+  const { streamClient } = useStream();
 
   const [question] = useState(
-    "Do you think mental health is something that should be talked about more today?"
+    "Do you think mental health is something that should be talked about more today?",
   );
   const [comments, setComments] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        const data = await listQotdComments(user);
+        
+        const data = await listQotdComments();
         setComments(data);
       } finally {
         setLoading(false);
@@ -36,31 +36,36 @@ export default function Qotd() {
   async function handlePost() {
     const trimmed = input.trim();
     if (!trimmed) return;
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    const newC = await createQotdComment({ text: trimmed, user: user });
-    setComments((prev) => [newC, ...prev]);
+    const newC = await createQotdComment({ text: trimmed});
+    setComments((prev) => { 
+      //remove old copy of curr user comment on ui.
+      //so take all except comment of curr user id from prev
+      const updated = prev.filter(c => c.id !== user.id);
+      return [newC, ...updated] 
+    });
     setInput("");
   }
 
   const handleConfirmClick = () => {
     confirmAlert({
-      title: 'Are you ready to post?',
-      message: 'This move will overwrite any previous comments you made.',
+      title: "Are you ready to post?",
+      message: "This move will overwrite any previous comments you made.",
       buttons: [
         {
-          label: 'Yes',
-          onClick: () => handlePost()
+          label: "Yes",
+          onClick: () => handlePost(),
         },
         {
-          label: 'No',
-          onClick: () => {}
-        }
-      ]
+          label: "No",
+          onClick: () => {},
+        },
+      ],
     });
   };
-
-
 
   return (
     <>
@@ -485,7 +490,6 @@ export default function Qotd() {
 
         <main className="qotd-main">
           <div className="qotd-content">
-
             {/* Back */}
             <button className="qotd-back-btn" onClick={() => navigate("/home")}>
               <span className="qotd-back-arrow">←</span>
@@ -494,7 +498,9 @@ export default function Qotd() {
 
             {/* Page title */}
             <p className="qotd-page-eyebrow">Daily</p>
-            <h1 className="qotd-page-title">Question <em>of the Day</em></h1>
+            <h1 className="qotd-page-title">
+              Question <em>of the Day</em>
+            </h1>
 
             {/* Question card */}
             <div className="qotd-question-card">
@@ -524,7 +530,9 @@ export default function Qotd() {
             {/* Comments heading */}
             <div className="qotd-comments-header">
               <p className="qotd-comments-eyebrow">Responses</p>
-              <h2 className="qotd-comments-title">What <em>others</em> think</h2>
+              <h2 className="qotd-comments-title">
+                What <em>others</em> think
+              </h2>
               <hr className="qotd-comments-rule" />
             </div>
 
@@ -544,15 +552,23 @@ export default function Qotd() {
                     <p className="qotd-comment-author">{c.userName}</p>
                     <p className="qotd-comment-text">{c.comment}</p>
                     <div className="qotd-comment-footer">
-                      <button className="qotd-reply-btn">
-                        ↩ Reply
-                      </button>
+                      {streamClient?.userID && streamClient.userID !== c.id && (
+                        <button
+                          className="qotd-reply-btn"
+                          onClick={() =>
+                            navigate("/chat?dm=" + c.id, {
+                              state: { from: "qotd" },
+                            })
+                          }
+                        >
+                          ↩ Reply
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             )}
-
           </div>
         </main>
       </div>

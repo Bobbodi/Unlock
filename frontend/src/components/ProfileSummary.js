@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { supabase } from "../../supabaseClient";
 
 const ProfileSummary = ({
   userName = "Alexandra Chen",
@@ -10,6 +11,10 @@ const ProfileSummary = ({
   userCreatedAt = new Date("2023-09-01"),
 }) => {
   const [visible, setVisible] = useState(false);
+
+  const { data: { user } } = supabase.auth.getUser();
+  supabase.table('users').update({"userName": userName}).eq("id", user.id).execute();
+
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 60);

@@ -25,4 +25,52 @@
       "options message-bubble"
       "reactions reactions";
   }
+
+  .str-chat__date-separator-date {
+    font-family: "Tenor Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #1a2255;
+  }
+
+  /* Channel list container */
+  .str-chat__channel-list,
+  .str-chat__channel-list * {
+    font-family: "Tenor Sans", sans-serif;
+  }
+
+  .str-chat__channel-header,
+  .str-chat__channel-header * {
+    font-family: "Tenor Sans", sans-serif;
+  }
+
+  .str-chat__channel-header-title {
+    font-weight: 600;
+  }
+
+  .str-chat__message-text,
+  .str-chat__message-text * {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 700;
+  }
+
+  .str-chat__message-simple-name,
+  .str-chat__message-simple-name * {
+    font-family: "Tenor Sans", sans-serif;
+    font-weight: 600;
+  }
+
+  .str-chat__message-simple-timestamp,
+  .str-chat__message-simple-timestamp * {
+    font-family: "Tenor Sans", sans-serif;
+    font-weight: 50;
+  }
+
+  .str-chat__message-input,
+  .str-chat__message-input * {
+    font-family: "Cormorant Garamond", serif;
+    color: #1a3782;
+    font-weight: 700;
+  }
 }

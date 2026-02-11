@@ -56,7 +56,7 @@ const FIELDS = [
   },
 ];
 
-const Info = () => {
+const Info = (props) => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     userName: "", gender: "", birth: "",
@@ -86,29 +86,48 @@ const Info = () => {
 
   const handleChange = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
-
-  const handleSubmit = async () => {
-    setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { alert("No user logged in!"); setSaving(false); return; }
-
-    const { error } = await supabase.from("info").upsert(
-      { user_id: user.id, ...form },
-      { onConflict: "user_id" }
-    );
-
-    setSaving(false);
-    if (error) {
-      console.error(error);
-      alert("Error saving: " + error.message);
+const handleCancel = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: existingData } = await supabase
+      .from("info")
+      .select("userName")
+      .eq("user_id", user.id)
+      .single();
+    
+    if (existingData) {
+      navigate("/profile");
     } else {
-      navigate("/home");
+      await supabase.auth.signOut();
+      navigate("/login");
     }
-  };
+  }
+};
+
+const handleSubmit = async () => {
+  setSaving(true);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) { alert("No user logged in!"); setSaving(false); return; }
+
+  const { data: existingData } = await supabase
+    .from("info")
+    .select("userName")
+    .eq("user_id", user.id)
+    .single();
+
+  const { error } = await supabase.from("info").upsert(
+    { user_id: user.id, ...form },
+    { onConflict: "user_id" }
+  );
+
+  setSaving(false);
+  if (error) {
+    console.error(error);
+    alert("Error saving: " + error.message);
+  } else {
+    navigate(existingData ? "/profile" : "/home"); //check if editing or first time
+  }
+};
 
   const filledCount = Object.values(form).filter(Boolean).length;
   const progress = Math.round((filledCount / FIELDS.length) * 100);
@@ -501,8 +520,8 @@ const Info = () => {
 
           {/* Footer */}
           <div className="info-footer">
-            <button className="info-logout-btn" onClick={handleLogout}>
-              Sign out
+            <button className="info-logout-btn" onClick={handleCancel}>
+              Go back
             </button>
             <button
               className="info-submit-btn"
