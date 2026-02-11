@@ -211,6 +211,8 @@ export default function ThoughtsFeed({ thoughts }) {
       <div className="tf-list">
         {thoughts.map((t, i) => {
           const isAnon = t.isAnonymous;
+          const isOwn =
+            streamClient?.userID && streamClient.userID == t.user_id;
           return (
             <div
               key={t.id}
@@ -237,6 +239,8 @@ export default function ThoughtsFeed({ thoughts }) {
                 <div className="tf-content-col">
                   {isAnon ? (
                     <p className="tf-author tf-author-anon">Anonymous</p>
+                  ) : isOwn ? (
+                    <p className="tf-author">You</p>
                   ) : (
                     <p className="tf-author">{t.authorName}</p>
                   )}
@@ -246,16 +250,14 @@ export default function ThoughtsFeed({ thoughts }) {
 
               {/* Footer: reply button aligned under content */}
               <div className="tf-card-footer">
-                {streamClient?.userID &&
-                  streamClient.userID !== t.user_id &&
-                  !isAnon && (
-                    <button
-                      className="tf-reply-btn"
-                      onClick={() => navigate("/chat?dm=" + t.user_id)}
-                    >
-                      ↩ Reply
-                    </button>
-                  )}
+                {!isOwn && !isAnon && (
+                  <button
+                    className="tf-reply-btn"
+                    onClick={() => navigate("/chat?dm=" + t.user_id)}
+                  >
+                    ↩ Reply
+                  </button>
+                )}
               </div>
             </div>
           );
