@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { useStream } from "../contexts/streamClientContext";
 
 export default function ThoughtsFeed({ thoughts }) {
   const navigate = useNavigate();
+  const { streamClient } = useStream();
 
   if (!thoughts || thoughts.length === 0) {
-    return (
-      <p className="tf-empty">No thoughts yet — be the first to share.</p>
-    );
+    return <p className="tf-empty">No thoughts yet — be the first to share.</p>;
   }
 
   return (
@@ -212,44 +212,50 @@ export default function ThoughtsFeed({ thoughts }) {
         {thoughts.map((t, i) => {
           const isAnon = t.isAnonymous;
           return (
-            <div key={t.id} className="tf-card" style={{ animationDelay: `${i * 0.04}s` }}>
+            <div
+              key={t.id}
+              className="tf-card"
+              style={{ animationDelay: `${i * 0.04}s` }}
+            >
               <div className="tf-card-body">
-
                 {/* Avatar + thread */}
                 <div className="tf-avatar-col">
                   <div className="tf-avatar-ring">
-                    {isAnon
-                      ? <div className="tf-avatar-anon">?</div>
-                      : 
-                        <div
-                          className="tf-avatar-img"
-                          dangerouslySetInnerHTML={{ __html: t.userPfp }}
-                        />
-
-                    }
+                    {isAnon ? (
+                      <div className="tf-avatar-anon">?</div>
+                    ) : (
+                      <div
+                        className="tf-avatar-img"
+                        dangerouslySetInnerHTML={{ __html: t.userPfp }}
+                      />
+                    )}
                   </div>
                   <div className="tf-thread" />
                 </div>
 
                 {/* Content */}
                 <div className="tf-content-col">
-                  {isAnon
-                    ? <p className="tf-author tf-author-anon">Anonymous</p>
-                    : <p className="tf-author">{t.authorName}</p>
-                  }
+                  {isAnon ? (
+                    <p className="tf-author tf-author-anon">Anonymous</p>
+                  ) : (
+                    <p className="tf-author">{t.authorName}</p>
+                  )}
                   <p className="tf-text">{t.content}</p>
                 </div>
-
               </div>
 
               {/* Footer: reply button aligned under content */}
               <div className="tf-card-footer">
-                <button
-                  className="tf-reply-btn"
-                  onClick={() => navigate("/chat?dm=" + t.user_id)}
-                >
-                  ↩ Reply
-                </button>
+                {streamClient?.userID &&
+                  streamClient.userID !== t.user_id &&
+                  !isAnon && (
+                    <button
+                      className="tf-reply-btn"
+                      onClick={() => navigate("/chat?dm=" + t.user_id)}
+                    >
+                      ↩ Reply
+                    </button>
+                  )}
               </div>
             </div>
           );
