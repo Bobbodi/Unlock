@@ -11,7 +11,7 @@ import { getProfileInfo } from "../../api/userProfile";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [userPfp, setUserPfp] = useState(defaultPfp);
+  const [userPfp, setUserPfp] = useState(null);
   const [userName, setUserName] = useState("Ruby Chan");
   const [userGender, setUserGender] = useState("Female");
   const [userBirth, setUserBirth] = useState(new Date("1999-07-18T00:00:00"));
@@ -26,6 +26,13 @@ export default function Profile() {
   const [userCreatedAt, setUserCreatedAt] = useState(
     new Date("2025-01-12T14:30:00")
   );
+
+  const [question] = useState(
+    "Do you think mental health is something that should be talked about more today?",
+  );
+
+  const [userComments, setUserComments] = useState([]);
+
   const [mounted, setMounted] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,32 +40,32 @@ export default function Profile() {
     navigate("/info");
   };
 
-  useEffect(() => {
-      async function load() {
-        setLoading(true);
-        try {
-          
-          const { data: userRes, error: userErr } = await supabase.auth.getUser();
-          if (userErr) throw userErr;
-        
-          const user = userRes?.user;
-          if (!user) throw new Error("Not logged in");
+  const load = async () => {
+  setLoading(true);
+  try {
+    const { data: userRes, error: userErr } = await supabase.auth.getUser();
+    if (userErr) throw userErr;
 
-          const data = await getProfileInfo(user.id);
-          
-          setUserName(data.userName);
-          setUserAnimal(data.animal);
-          setUserGender(data.gender);
-          setUserBirth(new Date(data.birth));
-          setUserDistressMethod(data.distressMethod);
-          setUserPfp(data.profilePic);
-          setUserFunFact(data.funFact);
-          setUserCreatedAt(new Date(data.created_at));
+    const user = userRes?.user;
+    if (!user) throw new Error("Not logged in");
 
-        } finally {
-          setLoading(false);
-        }
-      }
+    const datas = await getProfileInfo(user.id);
+
+    setUserName(datas.data.userName);
+    setUserAnimal(datas.data.animal);
+    setUserGender(datas.data.gender);
+    setUserBirth(new Date(datas.data.birth));
+    setUserDistressMethod(datas.data.distressMethod);
+    setUserPfp(datas.data.profilePic);
+    setUserFunFact(datas.data.funFact);
+    setUserCreatedAt(new Date(datas.data.created_at));
+    setUserComments(datas.thoughts || []);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
       load();
     }, []);
 
@@ -431,6 +438,201 @@ export default function Profile() {
           font-weight: 300;
         }
 
+        /* ── Feed list ── */
+        .tf-list {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        /* ── Individual card ── */
+        .tf-card {
+          background: #fff;
+          border-radius: 20px;
+          border: 1px solid rgba(43, 75, 189, 0.08);
+          padding: 18px 20px 16px;
+          box-shadow: 0 2px 12px rgba(43, 75, 189, 0.06);
+          transition: box-shadow 0.22s ease, transform 0.22s cubic-bezier(0.23,1,0.32,1);
+          animation: tf-in 0.3s ease both;
+        }
+
+        .tf-card:hover {
+          box-shadow: 0 6px 24px rgba(43, 75, 189, 0.11);
+          transform: translateY(-2px);
+        }
+
+        @keyframes tf-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0);   }
+        }
+
+        /* stagger */
+        .tf-card:nth-child(1)  { animation-delay: 0.03s; }
+        .tf-card:nth-child(2)  { animation-delay: 0.07s; }
+        .tf-card:nth-child(3)  { animation-delay: 0.11s; }
+        .tf-card:nth-child(4)  { animation-delay: 0.15s; }
+        .tf-card:nth-child(5)  { animation-delay: 0.19s; }
+
+        /* ── Card inner layout ── */
+        .tf-card-body {
+          display: flex;
+          gap: 14px;
+          align-items: flex-start;
+        }
+
+        /* Avatar column */
+        .tf-avatar-col {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          flex-shrink: 0;
+        }
+
+        .tf-avatar-ring {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          padding: 2px;
+          background: linear-gradient(135deg, #c2ceff, #7b93e8);
+          flex-shrink: 0;
+        }
+
+        .tf-avatar-img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
+          border: 2px solid #fff;
+        }
+
+        /* Anon avatar */
+        .tf-avatar-anon {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #dfe6ff, #c2ceff);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Cormorant Garamond', serif;
+          font-style: italic;
+          font-size: 16px;
+          color: rgba(43,75,189,0.45);
+          border: 2px solid #fff;
+          user-select: none;
+        }
+
+        /* Thread line */
+        .tf-thread {
+          width: 1.5px;
+          flex: 1;
+          min-height: 24px;
+          margin-top: 5px;
+          background: linear-gradient(180deg, rgba(43,75,189,0.12) 0%, transparent 100%);
+          border-radius: 99px;
+        }
+
+        /* Content column */
+        .tf-content-col {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .tf-author {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--navy);
+          margin: 0 0 6px;
+          /* nudge to align with avatar center */
+          padding-top: 3px;
+        }
+
+        .tf-author-anon {
+          color: rgba(43,75,189,0.45);
+          font-style: italic;
+          text-transform: none;
+          letter-spacing: 0.04em;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 13px;
+        }
+
+        .tf-text {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 300;
+          font-size: 17px;
+          line-height: 1.65;
+          color: rgba(26, 34, 85, 0.82);
+          margin: 0;
+          word-break: break-word;
+        }
+
+        /* Container for the top row of the comment card */
+.tf-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* The "Question Asked" tag */
+.tf-question-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--blue);
+  background: var(--blue-dim);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Date positioning */
+.tf-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+}
+
+/* The style for the prompt question */
+.tf-question-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+/* Subtle line between question and user answer */
+.tf-answer-divider {
+  width: 30px;
+  height: 2px;
+  background: var(--periwinkle);
+  margin-bottom: 12px;
+  border-radius: 2px;
+}
+
+/* Refined answer text */
+.tf-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Fix for avatar div when using dangerouslySetInnerHTML */
+.tf-avatar-img svg, .tf-avatar-img img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+}
+
         
       `}</style>
 
@@ -476,7 +678,13 @@ export default function Profile() {
               </button>
 
               {modalVisible && (
-                <AvatarModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+                <AvatarModal
+                  visible={modalVisible}
+                  onClose={async () => {
+                    setModalVisible(false);
+                    await load();
+                  }}
+                />
               )}
               
             </div>
@@ -542,8 +750,73 @@ export default function Profile() {
             </div>
           </div>
 
+          {/* User past comments */}
+
+          {/* User past comments */}
+
+  
+<div className={`profile-comments-container ${mounted ? "visible" : ""}`} 
+     style={{ padding: '0 56px 56px', opacity: mounted ? 1 : 0, transition: 'opacity 0.6s ease 0.4s' }}>
+  
+  <h2 style={{ 
+    fontFamily: 'Cormorant Garamond, serif', 
+    fontSize: '2rem', 
+    color: 'var(--text-primary)',
+    marginBottom: '24px' 
+  }}> 
+    Thoughts I've Shared
+  </h2>
+  {console.log(userComments)}
+  {console.log(userComments.length)}
+  {userComments.length === 0 ? (
+    <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>No comments yet.</p>
+  ) : (
+    <div className="tf-list">
+      {userComments.map((t, i) => (
+  <div key={i} className="tf-card">
+    <div className="tf-card-body">
+      {/* Left: Avatar Column */}
+      <div className="tf-avatar-col">
+        <div className="tf-avatar-ring">
+          {userPfp ? (
+            <div
+              className="tf-avatar-img"
+              dangerouslySetInnerHTML={{ __html: userPfp }}
+            />
+          ) : (
+            <div className="tf-avatar-anon">?</div>
+          )}
+        </div>
+        <div className="tf-thread" />
+      </div>
+
+      {/* Right: Content Column */}
+      <div className="tf-content-col">
+        <div className="tf-card-top">
+          <span className="tf-question-label">Question Asked</span>
+          <span className="tf-date">
+            {new Date(t.created_at).toLocaleDateString(undefined, { 
+              month: 'short', 
+              day: 'numeric',
+              year: 'numeric'
+            })}
+          </span>
+        </div>
         
-        </main>
+        <p className="tf-question-text">"{question}"</p>
+        
+        <div className="tf-answer-divider"></div>
+        
+        <p className="tf-text">{t.thoughts}</p>
+      </div>
+    </div>
+  </div>
+))}
+    </div>
+  )}
+</div>
+
+          </main> 
       </div>
     </>
   );

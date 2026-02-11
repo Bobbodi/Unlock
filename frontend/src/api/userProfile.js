@@ -18,7 +18,13 @@ export async function getProfileInfo(user_id) {
     .single();   
   if (error) throw error;
 
-  return data;
+const { data: thoughtsData, error: thoughtsError } = await supabase
+    .from("thoughts")
+    .select("thoughts, created_at")
+    .eq("user_id", user_id);
+
+  if (thoughtsError) throw thoughtsError;
+  return {data, thoughts: thoughtsData };
 }
 
 export async function saveNewProfilePic(svg, user_id) {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+
 export default function CreateThought({ defaultVisibility, onClose, onSubmit }) {
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState(defaultVisibility || "all");

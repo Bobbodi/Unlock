@@ -18,7 +18,8 @@ export async function listThoughts(tab) {
       visibility,
       is_anonymous,
       info (
-        "userName"
+        userName,
+        profilePic
       )
     `
     )
@@ -31,6 +32,7 @@ export async function listThoughts(tab) {
     const isAnon = !!t.is_anonymous;
   
     const nameFromInfo = t.info?.userName;
+    const profilePicFromInfo = t.info?.profilePic;
   
     return {
       id: t.thoughts_id,
@@ -43,6 +45,7 @@ export async function listThoughts(tab) {
         tab === "friends"
           ? (nameFromInfo || "Unknown user")  // never Anonymous in friends tab
           : (isAnon ? "Anonymous" : (nameFromInfo || "Unknown user")),
+      userPfp: profilePicFromInfo
     };
   });
 }
