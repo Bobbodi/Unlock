@@ -55,6 +55,7 @@ Singaporean adults seeking:
 ## Running the Project
 
 ### Backend
+In the `Unlock` folder, 
 **macOS**
 ```bash
 python3 -m venv venv
@@ -69,12 +70,17 @@ python3 -m flask --app comment:commentapp run
 ```
 py -m venv venv .\venv\Scripts\Activate.ps1 
 pip install flask flask-cors
-python-dotenv
+pip install supabase
+pip install python-dotenv
 cd backend
 python -m flask --app comment:commentapp run
 ```
 
 ### Frontend
+
+Create a new terminal, while keeping the backend's terminal running. 
+In the `Unlock` folder,
+
 ```
 cd frontend 
 npm install
