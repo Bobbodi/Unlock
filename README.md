@@ -68,7 +68,7 @@ python3 -m flask --app comment:commentapp run
 
 **Windows**
 ```
-py -m venv venv .\venv\Scripts\Activate.ps1 
+py -m venv venv .\venv\Scripts\activate
 pip install flask flask-cors
 pip install supabase
 pip install python-dotenv
