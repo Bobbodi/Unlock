@@ -60,6 +60,7 @@ Singaporean adults seeking:
 python3 -m venv venv
 source venv/bin/activate
 pip install flask flask-cors python-dotenv
+pip install supabase
 cd backend
 python3 -m flask --app comment:commentapp run
 ```
