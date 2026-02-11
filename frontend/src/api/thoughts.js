@@ -16,6 +16,7 @@ export async function listThoughts(tab) {
       created_at,
       thoughts,
       visibility,
+      is_anonymous,
       info (
         "userName"
       )
@@ -26,14 +27,24 @@ export async function listThoughts(tab) {
 
   if (error) throw error;
    // link to supabase
-  return (data || []).map((t) => ({
-    id: t.thoughts_id,
-    user_id: t.user_id,
-    createdAt: t.created_at,
-    content: t.thoughts,
-    visibility: t.visibility,
-    authorName: t.info?.userName || "Anonymous",
-  }));
+   return (data || []).map((t) => {
+    const isAnon = !!t.is_anonymous;
+  
+    const nameFromInfo = t.info?.userName;
+  
+    return {
+      id: t.thoughts_id,
+      user_id: t.user_id,
+      createdAt: t.created_at,
+      content: t.thoughts,
+      visibility: t.visibility,
+      isAnonymous: isAnon,
+      authorName:
+        tab === "friends"
+          ? (nameFromInfo || "Unknown user")  // never Anonymous in friends tab
+          : (isAnon ? "Anonymous" : (nameFromInfo || "Unknown user")),
+    };
+  });
 }
 
 /**
@@ -41,16 +52,25 @@ export async function listThoughts(tab) {
  * @param {{content, visibility}} param0 
  * 
  */
-export async function createThought({ content, visibility }) {
+export async function createThought({ content, visibility, isAnonymous }) {
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
   if (userErr) throw userErr;
 
   const user = userRes?.user;
   if (!user) throw new Error("Not logged in");
 
+  const safeIsAnonymous = visibility === "friends" ? false : !!isAnonymous;
+
   const { data, error } = await supabase
     .from("thoughts")
-    .insert([{ user_id: user.id, thoughts: content, visibility }])
+    .insert([
+      {
+        user_id: user.id,
+        thoughts: content,
+        visibility,
+        is_anonymous: safeIsAnonymous,
+      },
+    ])
     .select(
       `
       thoughts_id,
@@ -58,6 +78,7 @@ export async function createThought({ content, visibility }) {
       created_at,
       thoughts,
       visibility,
+      is_anonymous,
       info ( "userName" )
     `
     )
@@ -71,6 +92,7 @@ export async function createThought({ content, visibility }) {
     createdAt: data.created_at,
     content: data.thoughts,
     visibility: data.visibility,
-    authorName: data.info?.userName || "Anonymous",
+    isAnonymous: data.is_anonymous,
+    authorName: data.is_anonymous ? "Anonymous" : (data.info?.userName || "Anonymous"),
   };
 }

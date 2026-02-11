@@ -40,9 +40,9 @@ export default function ThoughtsSection() {
    * Handles the creation of new thought being posted either in all or friends
    * @param {{content: string, visibility: "all" | "friends"}} param0 
    */
-  async function handleCreate({ content, visibility }) {
+  async function handleCreate({ content, visibility, isAnonymous }) {
     try {
-      const newPost = await createThought({ content, visibility });
+      const newPost = await createThought({ content, visibility, isAnonymous });
       if (visibility === activeTab) setThoughts((prev) => [newPost, ...prev]);
       setOpenModal(false);
     } catch (e) {
