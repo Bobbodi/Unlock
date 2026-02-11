@@ -30,7 +30,7 @@ export default function Sidebar() {
             style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
           />
         </button>
-        <p style={{ color: "#384b95", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Profile</p>
+        <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Profile</p>
 
         <button
           style={navBtnStyle(location.pathname === "/home")}
@@ -56,7 +56,7 @@ export default function Sidebar() {
             style={{ width: SIDEBAR_IMAGE_SIZE, height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center" }}
           />
         </button>
-        <p style={{ color: "#384b95", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 10 }}> Chat</p>
+        <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 10 }}> Chat</p>
       </div>
 
       <div>
@@ -70,7 +70,7 @@ export default function Sidebar() {
       >
         ⏻
       </button>
-      <p style={{ color: "#384b95", fontSize: 14, textAlign: "center", marginTop: 10, marginBottom: 0 }}>Logout</p>
+      <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: 10, marginBottom: 0 }}>Logout</p>
       </div>
     </div>
   );

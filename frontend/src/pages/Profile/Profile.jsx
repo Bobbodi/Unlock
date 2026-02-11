@@ -4,6 +4,7 @@ import ProfileImage from "../../components/ProfileImage";
 import { PROFILEIMAGESIZE } from "../../utils/constants";
 import { useState, useEffect } from "react";
 import defaultPfp from "../../assets/images/default-pfp.jpg";
+import AvatarModal from "./AvatarModel.tsx";
 
 export default function Profile() {
   const [userPfp, setUserPfp] = useState(defaultPfp);
@@ -21,6 +22,8 @@ export default function Profile() {
     new Date("2025-01-12T14:30:00")
   );
   const [mounted, setMounted] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80);
@@ -414,7 +417,14 @@ export default function Profile() {
                   <ProfileImage userPfp={userPfp} size={PROFILEIMAGESIZE} />
                 </div>
               </div>
-            
+              <button className="profile-chip profile-chip--teal" onClick={() => setModalVisible(true)}>
+                Change avatar
+              </button>
+
+              {modalVisible && (
+                <AvatarModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+              )}
+              
             </div>
 
             <div className="profile-info-col">
