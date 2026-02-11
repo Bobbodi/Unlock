@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { saveNewProfilePic } from "../../api/userProfile";
+import { supabase } from "../../supabaseClient";
+
 import {
   adventurer,
   avataaars,
@@ -37,6 +40,16 @@ export default function AvatarModal({ visible, onClose }: Props) {
     const avatar = createAvatar(transform(styleStrName) as any, { seed } as any).toString();
     setSvg(avatar);
   };
+
+  const saveAvatarInDb = async () => {
+    const { data: userRes, error: userErr } = await supabase.auth.getUser();
+    if (userErr) throw userErr;
+  
+    const user = userRes?.user;
+    if (!user) throw new Error("Not logged in");
+    
+    saveNewProfilePic(svg, user.id);
+  }
 
   if (!visible) return null;
 
@@ -83,6 +96,11 @@ export default function AvatarModal({ visible, onClose }: Props) {
             />
           </div>
         )}
+
+        <button onClick={saveAvatarInDb} style={buttonStyle}>
+          Save Avatar
+        </button>
+
       </div>
     </div>
   );

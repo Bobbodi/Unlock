@@ -44,8 +44,6 @@ export default function Profile() {
           const user = userRes?.user;
           if (!user) throw new Error("Not logged in");
 
-          console.log(user);
-          console.log(user.id);
           const data = await getProfileInfo(user.id);
           
           setUserName(data.userName);
@@ -53,6 +51,7 @@ export default function Profile() {
           setUserGender(data.gender);
           setUserBirth(new Date(data.birth));
           setUserDistressMethod(data.distressMethod);
+          setUserPfp(data.profilePic);
           setUserFunFact(data.funFact);
           setUserCreatedAt(new Date(data.created_at));
 

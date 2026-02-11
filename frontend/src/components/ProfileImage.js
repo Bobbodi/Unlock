@@ -5,12 +5,7 @@ export default function ProfileImage({ userPfp, size }) {
     <div
       className="profile-image-container"
       style={{ width: size, height: size }}
-    >
-      <img
-        src={userPfp}
-        alt="Profile"
-        className="profile-image"
-      />
-    </div>
+      dangerouslySetInnerHTML={{ __html: userPfp }}
+    />
   );
 }

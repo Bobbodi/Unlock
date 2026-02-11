@@ -1,10 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { useStream } from "../contexts/streamClientContext";
+
 import defaultPfp from "../assets/images/default-pfp.jpg";
 import homeIcon from "../assets/images/home-icon-center.png";
 import chatIcon from "../assets/images/chat-icon.jpg";
 import { SIDEBAR_IMAGE_SIZE } from "../utils/constants";
+
+import { useEffect } from "react";
 
 import { useState } from "react";
 import "./ProfileImage.css";
@@ -35,17 +37,11 @@ export default function Sidebar() {
           onClick={() => navigate("/profile")}
           aria-label="Profile"
         >
-          <img
-            src={userPfp}
-            alt="Profile"
-            style={{
-              width: SIDEBAR_IMAGE_SIZE,
-              height: SIDEBAR_IMAGE_SIZE,
-              objectFit: "cover",
-              borderRadius: 16,
-              objectPosition: "center",
-            }}
-          />
+          <img src={userPfp} 
+          alt="Profile" 
+          style={{ width: SIDEBAR_IMAGE_SIZE, 
+            height: SIDEBAR_IMAGE_SIZE, objectFit: "cover", borderRadius: 16, objectPosition: "center", }} />
+
         </button>
         <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Profile</p>
 
