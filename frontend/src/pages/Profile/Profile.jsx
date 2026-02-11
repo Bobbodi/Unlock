@@ -641,29 +641,29 @@ useEffect(() => {
 
         <main className="profile-main">
           {/* Header */}
-<div className={`profile-header ${mounted ? "visible" : ""}`}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-    <div>
-      <div className="profile-header-eyebrow">Your profile</div>
-      <h1 className="profile-header-title">
-        My Gallery
-      </h1>
-    </div>
-    <button onClick={goToInfo} style={{
-      padding: '8px 16px',
-      borderRadius: '6px',
-      border: '1px solid #2b4bbd',
-      background: 'white',
-      color: '#2b4bbd',
-      cursor: 'pointer',
-      fontSize: '1rem',
-      fontFamily: 'Outfit, sans-serif',
-    }}>
-      Edit Profile
-    </button>
-  </div>
-  <div className="profile-header-divider" />
-</div>
+          <div className={`profile-header ${mounted ? "visible" : ""}`}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div className="profile-header-eyebrow">Your profile</div>
+                <h1 className="profile-header-title">
+                  My Gallery
+                  </h1>
+                  </div>
+                  <button onClick={goToInfo} style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: '1px solid #2b4bbd',
+                    background: 'white',
+                    color: '#2b4bbd',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontFamily: 'Outfit, sans-serif',
+                    }}>
+                      Edit Profile
+                      </button>
+                      </div>
+                      <div className="profile-header-divider" />
+                      </div>
 
           {/* Hero */}
           <div className={`profile-hero ${mounted ? "visible" : ""}`}>
