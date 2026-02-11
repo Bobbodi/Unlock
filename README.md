@@ -65,7 +65,8 @@ python3 -m flask --app comment:commentapp run
 ```
 
 **Windows**
-```py -m venv venv .\venv\Scripts\Activate.ps1 
+```
+py -m venv venv .\venv\Scripts\Activate.ps1 
 pip install flask flask-cors
 python-dotenv
 cd backend
@@ -73,7 +74,8 @@ python -m flask --app comment:commentapp run
 ```
 
 ### Frontend
-```cd frontend 
+```
+cd frontend 
 npm install
 npm install @dicebear/core
 npm start
