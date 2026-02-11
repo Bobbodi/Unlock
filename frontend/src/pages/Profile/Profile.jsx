@@ -4,11 +4,8 @@ import ProfileImage from "../../components/ProfileImage";
 import { PROFILEIMAGESIZE } from "../../utils/constants";
 import { useState, useEffect } from "react";
 import defaultPfp from "../../assets/images/default-pfp.jpg";
-<<<<<<< HEAD
 import AvatarModal from "./AvatarModel.tsx";
-=======
 import { useNavigate } from "react-router-dom";
->>>>>>> aece9029eee485140b7d9cbc786c93b42c4ab9e8
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -28,13 +25,11 @@ export default function Profile() {
   );
   const [mounted, setMounted] = useState(false);
 
-<<<<<<< HEAD
   const [modalVisible, setModalVisible] = useState(false);
-=======
+
   const goToInfo = () => {
     navigate("/info");
   };
->>>>>>> aece9029eee485140b7d9cbc786c93b42c4ab9e8
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80);
