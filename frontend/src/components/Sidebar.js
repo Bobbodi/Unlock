@@ -47,11 +47,7 @@ export default function Sidebar() {
             }}
           />
         </button>
-<<<<<<< HEAD
         <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 0 }}>Profile</p>
-=======
-        <p style={labelStyle(location.pathname === "/profile")}>Profile</p>
->>>>>>> aece9029eee485140b7d9cbc786c93b42c4ab9e8
 
         <button
           style={navBtnStyle(location.pathname === "/home")}
@@ -89,25 +85,10 @@ export default function Sidebar() {
             }}
           />
         </button>
-<<<<<<< HEAD
         <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: -20, marginBottom: 10 }}> Chat</p>
       </div>
 
-      <div>
-      <button
-        style={navBtnStyle(false)}
-        onClick={async () => {
-          await supabase.auth.signOut();
-          navigate("/login");
-        }}
-        aria-label="Logout"
-      >
-        ⏻
-      </button>
-      <p style={{ color: "#384b95", fontFamily: "Outfit, sans-serif", fontSize: 14, textAlign: "center", marginTop: 10, marginBottom: 0 }}>Logout</p>
-=======
-        <p style={labelStyle(location.pathname === "/chat")}>Chat</p>
-      </div>
+      
 
       <div>
         <button
@@ -132,7 +113,6 @@ export default function Sidebar() {
         >
           Logout
         </p>
->>>>>>> aece9029eee485140b7d9cbc786c93b42c4ab9e8
       </div>
     </div>
   );

@@ -4,11 +4,10 @@ import ProfileImage from "../../components/ProfileImage";
 import { PROFILEIMAGESIZE } from "../../utils/constants";
 import { useState, useEffect } from "react";
 import defaultPfp from "../../assets/images/default-pfp.jpg";
-<<<<<<< HEAD
 import AvatarModal from "./AvatarModel.tsx";
-=======
 import { useNavigate } from "react-router-dom";
->>>>>>> aece9029eee485140b7d9cbc786c93b42c4ab9e8
+import { supabase } from "../../supabaseClient";
+import { getProfileInfo } from "../../api/userProfile";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -16,6 +15,7 @@ export default function Profile() {
   const [userName, setUserName] = useState("Ruby Chan");
   const [userGender, setUserGender] = useState("Female");
   const [userBirth, setUserBirth] = useState(new Date("1999-07-18T00:00:00"));
+  const [loading, setLoading] = useState(false);
   const [userFunFact, setUserFunFact] = useState(
     "Can solve a Rubik's cube in under a minute"
   );
@@ -28,13 +28,41 @@ export default function Profile() {
   );
   const [mounted, setMounted] = useState(false);
 
-<<<<<<< HEAD
   const [modalVisible, setModalVisible] = useState(false);
-=======
   const goToInfo = () => {
     navigate("/info");
   };
->>>>>>> aece9029eee485140b7d9cbc786c93b42c4ab9e8
+
+  useEffect(() => {
+      async function load() {
+        setLoading(true);
+        try {
+          
+          const { data: userRes, error: userErr } = await supabase.auth.getUser();
+          if (userErr) throw userErr;
+        
+          const user = userRes?.user;
+          if (!user) throw new Error("Not logged in");
+
+          console.log(user);
+          console.log(user.id);
+          const data = await getProfileInfo(user.id);
+          
+          setUserName(data.userName);
+          setUserAnimal(data.animal);
+          setUserGender(data.gender);
+          setUserBirth(new Date(data.birth));
+          setUserDistressMethod(data.distressMethod);
+          setUserFunFact(data.funFact);
+          setUserCreatedAt(new Date(data.created_at));
+
+        } finally {
+          setLoading(false);
+        }
+      }
+      load();
+    }, []);
+
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80);
