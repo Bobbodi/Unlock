@@ -79,24 +79,36 @@ export default function ThoughtsFeed({ thoughts }) {
           flex-shrink: 0;
         }
 
-        .tf-avatar-ring {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          padding: 2px;
-          background: linear-gradient(135deg, #c2ceff, #7b93e8);
-          flex-shrink: 0;
-        }
+        /* 1. Add overflow: hidden to the ring */
+.tf-avatar-ring {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, #c2ceff, #7b93e8);
+  flex-shrink: 0;
+  overflow: hidden; /* This clips the image to the circle */
+  display: flex;    /* Helps center the injected content */
+  align-items: center;
+  justify-content: center;
+}
 
-        .tf-avatar-img {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          object-fit: cover;
-          object-position: center;
-          display: block;
-          border: 2px solid #fff;
-        }
+/* 2. Force the injected SVG or HTML to behave */
+.tf-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  overflow: hidden;
+}
+
+/* 3. Specifically target the SVG tag inside tf-avatar-img */
+.tf-avatar-img svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
 
         /* Anon avatar */
         .tf-avatar-anon {
@@ -143,12 +155,12 @@ export default function ThoughtsFeed({ thoughts }) {
         }
 
         .tf-author-anon {
-          color: rgba(43,75,189,0.45);
+          color: rgba(43,75,189,0.8);
           font-style: italic;
           text-transform: none;
           letter-spacing: 0.04em;
           font-family: 'Cormorant Garamond', serif;
-          font-size: 13px;
+          font-size: 18px;
         }
 
         .tf-text {

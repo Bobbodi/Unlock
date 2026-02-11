@@ -18,7 +18,7 @@ const STYLES = [
 ];
 
 export default function AvatarModal({ visible, onClose }: Props) {
-  const [seed, setSeed]               = useState("your name");
+  const [seed, setSeed]               = useState("");
   const [svg, setSvg]                 = useState("");
   const [styleStrName, setStyleStrName] = useState("lorelei");
   const [saving, setSaving]           = useState(false);
@@ -50,6 +50,11 @@ export default function AvatarModal({ visible, onClose }: Props) {
       if (!user) throw new Error("Not logged in");
       await saveNewProfilePic(svg, user.id);
       setSaved(true);
+
+      setTimeout(() => {
+      onClose(); // This is the prop you passed from Profile.js
+    }, 1000);
+    
     } finally {
       setSaving(false);
     }
@@ -383,7 +388,7 @@ export default function AvatarModal({ visible, onClose }: Props) {
                   <button
                     key={s.value}
                     className={`av-chip${styleStrName === s.value ? " active" : ""}`}
-                    onClick={() => { setStyleStrName(s.value); setSaved(false); }}
+                    onClick={() => { setStyleStrName(s.value); setSaved(false); generateAvatar(); }}
                   >
                     {s.label}
                   </button>
@@ -411,9 +416,7 @@ export default function AvatarModal({ visible, onClose }: Props) {
 
           {/* Footer */}
           <div className="av-footer">
-            <button className="av-gen-btn" onClick={generateAvatar}>
-              ✦ Generate
-            </button>
+            
             <button
               className="av-save-btn"
               onClick={saveAvatarInDb}

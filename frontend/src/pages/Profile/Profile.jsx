@@ -287,6 +287,7 @@ useEffect(() => {
         /* Info column */
         .profile-info-col {
           display: flex;
+          width: 100%;
           flex-direction: column;
           align-items: flex-center;
           gap: 8px;
@@ -793,7 +794,6 @@ useEffect(() => {
       {/* Right: Content Column */}
       <div className="tf-content-col">
         <div className="tf-card-top">
-          <span className="tf-question-label">Question Asked</span>
           <span className="tf-date">
             {new Date(t.created_at).toLocaleDateString(undefined, { 
               month: 'short', 
