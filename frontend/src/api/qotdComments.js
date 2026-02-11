@@ -37,7 +37,7 @@ export async function listQotdComments() {
       return 1;
     }
     
-    return b.userName.localeCompare(a.userName)
+    return (b.userName ?? "").localeCompare(a.userName ?? "");
   });
 }
 
