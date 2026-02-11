@@ -130,7 +130,7 @@ const handleSubmit = async () => {
   }
 };
 
-  const filledCount = Object.values(form).filter(Boolean).length - 1; // exclude profilePic
+  const filledCount = Object.values(form).filter(Boolean).length - (form.profilePic ? 1 : 0);
   const progress = Math.round((filledCount / FIELDS.length) * 100);
 
   return (
